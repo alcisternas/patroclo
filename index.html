@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Patroclo" />
+  <meta name="theme-color" content="#2D5A3D" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <title>Patroclo — Alimentación diaria</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F7F7F5;
+      --surface:   #FFFFFF;
+      --border:    #E2E2DE;
+      --text:      #1A1A1A;
+      --muted:     #6B6B6B;
+      --accent:    #2D5A3D;
+      --accent-lt: #EAF1EC;
+      --warn:      #B83232;
+      --warn-lt:   #FDF0F0;
+      --warn-bd:   #E8BFBF;
+      --radius:    14px;
+      --shadow:    0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+      --item-h:    44px;
+      --visible:   5; /* ítems visibles en la rueda */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding: 0 0 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    header { padding: 52px 24px 20px; }
+    header .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    header h1 { font-size: 28px; font-weight: 700; letter-spacing: -.4px; line-height: 1.15; }
+    header p  { margin-top: 6px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin: 0 16px 16px; padding: 20px;
+    }
+    .field + .field { margin-top: 18px; }
+    label {
+      display: block; font-size: 12px; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .input-row { display: flex; align-items: center; gap: 10px; }
+    input[type="number"] {
+      flex: 1; height: 48px; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 0 14px; font-size: 20px;
+      font-weight: 500; color: var(--text); background: var(--bg);
+      -webkit-appearance: none; appearance: none; outline: none;
+      transition: border-color .15s;
+    }
+    input[type="number"]:focus { border-color: var(--accent); background: #fff; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .unit { font-size: 15px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+
+    /* ── Drum / Wheel picker ── */
+    .drum-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1.3fr;
+      gap: 8px;
+    }
+    .drum-col { display: flex; flex-direction: column; gap: 5px; }
+    .drum-col .sublabel {
+      font-size: 11px; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted); text-align: center;
+    }
+    .drum-wrap {
+      position: relative;
+      height: calc(var(--item-h) * var(--visible));
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      cursor: pointer;
+      -webkit-user-select: none; user-select: none;
+    }
+    /* Selector highlight (líneas y fondo central) */
+    .drum-wrap::before,
+    .drum-wrap::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    /* Gradientes superior e inferior para efecto "fade" */
+    .drum-wrap::before {
+      top: 0;
+      height: calc(var(--item-h) * 2);
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+    }
+    .drum-wrap::after {
+      bottom: 0;
+      height: calc(var(--item-h) * 2);
+      background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+    }
+    /* Franja central seleccionada */
+    .drum-selector {
+      position: absolute;
+      left: 0; right: 0;
+      top: calc(var(--item-h) * 2);
+      height: var(--item-h);
+      border-top: 1.5px solid var(--accent);
+      border-bottom: 1.5px solid var(--accent);
+      background: var(--accent-lt);
+      z-index: 1;
+      pointer-events: none;
+      border-radius: 4px;
+    }
+    .drum-list {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      will-change: transform;
+      transition: transform .05s linear;
+    }
+    .drum-item {
+      height: var(--item-h);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 500; color: var(--text);
+      position: relative; z-index: 0;
+    }
+    .drum-item.placeholder { color: transparent; }
+
+    /* Badge edad calculada */
+    .edad-badge {
+      margin-top: 10px; padding: 9px 12px;
+      background: var(--accent-lt); border-radius: 8px;
+      font-size: 13px; color: #1E4A2B; line-height: 1.4; display: none;
+    }
+    .edad-badge b { font-weight: 700; }
+    .edad-badge.visible { display: block; }
+    .edad-badge.fuera-rango { background: var(--warn-lt); color: #7A2020; }
+
+    /* ── Botón calcular ── */
+    .btn-calc {
+      display: block; width: calc(100% - 32px);
+      margin: 4px 16px 0; height: 52px;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius); font-size: 17px; font-weight: 600;
+      letter-spacing: -.1px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+    }
+    .btn-calc:active { opacity: .85; }
+
+    /* ── Resultados ── */
+    #results { margin-top: 20px; }
+    .alert-box {
+      margin: 0 16px 16px;
+      background: var(--warn-lt); border: 1px solid var(--warn-bd);
+      border-left: 4px solid var(--warn); border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .alert-box .alert-title { font-size: 13px; font-weight: 700; color: var(--warn); margin-bottom: 4px; }
+    .alert-box p { font-size: 13px; color: #7A2020; line-height: 1.5; }
+    .ok-box {
+      margin: 0 16px 16px;
+      background: var(--accent-lt); border: 1px solid #C2D9C8;
+      border-left: 4px solid var(--accent); border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .ok-box p { font-size: 13px; color: #1E4A2B; line-height: 1.5; }
+
+    .result-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin: 0 16px 12px; overflow: hidden;
+    }
+    .result-card .rc-header { background: var(--accent); padding: 14px 18px; }
+    .result-card .rc-header span {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(255,255,255,.7);
+    }
+    .result-card .rc-header strong {
+      display: block; font-size: 38px; font-weight: 700;
+      color: #fff; letter-spacing: -1px; line-height: 1.1; margin-top: 2px;
+    }
+    .result-card .rc-header em {
+      font-size: 15px; font-weight: 400; font-style: normal; color: rgba(255,255,255,.8);
+    }
+    .tomas-grid { display: grid; padding: 16px 18px; gap: 10px; }
+    .toma-row { display: flex; align-items: center; justify-content: space-between; }
+    .toma-label { font-size: 14px; color: var(--muted); }
+    .toma-label strong { display: block; font-size: 16px; font-weight: 600; color: var(--text); }
+    .toma-val { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; }
+    .toma-val span { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .divider { height: 1px; background: var(--border); margin: 0 18px; }
+    .info-row { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .info-row span { font-size: 12px; color: var(--muted); }
+    .info-row strong { font-size: 12px; font-weight: 600; color: var(--text); }
+    .interp-note {
+      margin: 0 16px 0; padding: 10px 14px;
+      background: var(--surface); border-radius: 10px; border: 1px solid var(--border);
+    }
+    .interp-note p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .interp-note p b { color: var(--text); }
+
+    /* Banner instalar PWA */
+    #installBanner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--accent); color: #fff;
+      padding: 14px 20px 28px;
+      font-size: 13px; line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 12px;
+      z-index: 100; box-shadow: 0 -2px 12px rgba(0,0,0,.15);
+    }
+    #installBanner p { flex: 1; }
+    #installBanner b { display: block; font-size: 14px; margin-bottom: 3px; }
+    #installBanner button {
+      background: transparent; border: none; color: rgba(255,255,255,.7);
+      font-size: 22px; line-height: 1; cursor: pointer; padding: 0; flex-shrink: 0;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <p class="eyebrow">Royal Canin Giant Puppy</p>
+    <h1>Patroclo</h1>
+    <p>Gran Danés macho · Peso adulto esperado 70 kg</p>
+  </header>
+
+  <div class="card">
+    <!-- Peso -->
+    <div class="field">
+      <label>Peso actual</label>
+      <div class="input-row">
+        <input type="number" id="peso" min="1" max="80" step="0.1"
+               inputmode="decimal" placeholder="0.0" />
+        <span class="unit">kg</span>
+      </div>
+    </div>
+
+    <!-- Fecha de nacimiento — ruedas -->
+    <div class="field">
+      <label>Fecha de nacimiento</label>
+      <div class="drum-row">
+
+        <div class="drum-col">
+          <span class="sublabel">Día</span>
+          <div class="drum-wrap" id="drumDia">
+            <div class="drum-selector"></div>
+            <div class="drum-list" id="listDia"></div>
+          </div>
+        </div>
+
+        <div class="drum-col">
+          <span class="sublabel">Mes</span>
+          <div class="drum-wrap" id="drumMes">
+            <div class="drum-selector"></div>
+            <div class="drum-list" id="listMes"></div>
+          </div>
+        </div>
+
+        <div class="drum-col">
+          <span class="sublabel">Año</span>
+          <div class="drum-wrap" id="drumAnio">
+            <div class="drum-selector"></div>
+            <div class="drum-list" id="listAnio"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="edad-badge" id="edadBadge"></div>
+    </div>
+  </div>
+
+  <button class="btn-calc" onclick="calcular()">Calcular ración</button>
+
+  <!-- Resultados -->
+  <div id="results" class="hidden">
+    <div id="alertaPeso" class="alert-box hidden">
+      <p class="alert-title">Peso fuera del rango normal</p>
+      <p id="alertaTexto"></p>
+    </div>
+    <div id="okPeso" class="ok-box hidden">
+      <p id="okTexto"></p>
+    </div>
+
+    <div class="result-card">
+      <div class="rc-header">
+        <span>Ración diaria total</span>
+        <strong id="totalGramos">— <em>g/día</em></strong>
+      </div>
+      <div class="tomas-grid" id="tomasGrid"></div>
+      <div class="divider"></div>
+      <div class="info-row">
+        <span>Frecuencia de tomas</span>
+        <strong id="frecLabel">—</strong>
+      </div>
+      <div class="info-row">
+        <span>Alimento</span>
+        <strong>Royal Canin Giant Puppy</strong>
+      </div>
+    </div>
+
+    <div class="interp-note">
+      <p id="interpTexto"></p>
+    </div>
+  </div>
+
+  <!-- Banner instalar como app -->
+  <div id="installBanner" class="hidden">
+    <p>
+      <b>Instalar como app</b>
+      Tocá el botón compartir <strong>⎙</strong> de Safari y elegí
+      <strong>"Agregar a pantalla de inicio"</strong>.
+    </p>
+    <button onclick="cerrarBanner()" aria-label="Cerrar">×</button>
+  </div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// TABLAS
+// ─────────────────────────────────────────────────────────────────
+const tablaAlimento = [
+  { mes: 2, g: 480 },
+  { mes: 4, g: 720 },
+  { mes: 6, g: 810 },
+  { mes: 8, g: 815 },
+];
+const tablaPeso = {
+  2: { min: 15, max: 20 },
+  3: { min: 22, max: 28 },
+  4: { min: 30, max: 36 },
+  5: { min: 35, max: 43 },
+  6: { min: 40, max: 50 },
+  7: { min: 45, max: 55 },
+  8: { min: 50, max: 60 },
+};
+
+// ─────────────────────────────────────────────────────────────────
+// DRUM PICKER
+// ─────────────────────────────────────────────────────────────────
+const ITEM_H    = 44;   // px — debe coincidir con --item-h en CSS
+const VISIBLE   = 5;    // ítems visibles
+const PAD       = 2;    // ítems vacíos arriba y abajo (= (VISIBLE-1)/2)
+
+// Cada drum: { listEl, items[], selectedIndex, startY, currentOffset, baseOffset }
+const drums = {};
+
+function crearDrum(id, listId, items) {
+  const listEl = document.getElementById(listId);
+
+  // Padding top/bottom (2 ítems vacíos)
+  for (let p = 0; p < PAD; p++) {
+    const ph = document.createElement('div');
+    ph.className = 'drum-item placeholder';
+    ph.textContent = '·';
+    listEl.appendChild(ph);
+  }
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'drum-item';
+    el.textContent = item.label;
+    listEl.appendChild(el);
+  });
+  for (let p = 0; p < PAD; p++) {
+    const ph = document.createElement('div');
+    ph.className = 'drum-item placeholder';
+    ph.textContent = '·';
+    listEl.appendChild(ph);
+  }
+
+  const state = {
+    listEl,
+    items,
+    selectedIndex: 0,
+    startY: 0,
+    startOffset: 0,
+    currentOffset: 0,
+    dragging: false,
+    lastY: 0,
+    lastT: 0,
+    velocity: 0,
+  };
+  drums[id] = state;
+
+  setOffset(id, 0, false);
+  attachDrumEvents(id);
+}
+
+function setOffset(id, offset, animate) {
+  const state = drums[id];
+  const maxOffset = (state.items.length - 1) * ITEM_H;
+  offset = Math.max(0, Math.min(offset, maxOffset));
+  state.currentOffset = offset;
+
+  if (animate) {
+    state.listEl.style.transition = 'transform .25s cubic-bezier(.25,.46,.45,.94)';
+  } else {
+    state.listEl.style.transition = 'none';
+  }
+  state.listEl.style.transform = `translateY(${-offset}px)`;
+
+  const idx = Math.round(offset / ITEM_H);
+  state.selectedIndex = Math.max(0, Math.min(idx, state.items.length - 1));
+}
+
+function snapToNearest(id) {
+  const state = drums[id];
+  const target = Math.round(state.currentOffset / ITEM_H) * ITEM_H;
+  setOffset(id, target, true);
+  actualizarEdad();
+}
+
+function getVal(id) {
+  const state = drums[id];
+  if (!state) return null;
+  return state.items[state.selectedIndex].value;
+}
+
+function attachDrumEvents(id) {
+  const wrap = document.getElementById('drum' + id.charAt(0).toUpperCase() + id.slice(1));
+  // no necesitamos el id del wrap, usamos el parámetro directamente
+  // buscar el drum-wrap correcto
+  const wrapEl = drums[id].listEl.closest('.drum-wrap');
+
+  let animFrame = null;
+
+  // Touch
+  wrapEl.addEventListener('touchstart', e => {
+    cancelAnimationFrame(animFrame);
+    const state = drums[id];
+    state.dragging = true;
+    state.startY = e.touches[0].clientY;
+    state.startOffset = state.currentOffset;
+    state.lastY = state.startY;
+    state.lastT = Date.now();
+    state.velocity = 0;
+    state.listEl.style.transition = 'none';
+  }, { passive: true });
+
+  wrapEl.addEventListener('touchmove', e => {
+    const state = drums[id];
+    if (!state.dragging) return;
+    const dy = state.startY - e.touches[0].clientY;
+    const now = Date.now();
+    state.velocity = (e.touches[0].clientY - state.lastY) / (now - state.lastT + 1);
+    state.lastY = e.touches[0].clientY;
+    state.lastT = now;
+    setOffset(id, state.startOffset + dy, false);
+  }, { passive: true });
+
+  wrapEl.addEventListener('touchend', () => {
+    const state = drums[id];
+    state.dragging = false;
+    // Inercia suave
+    let offset = state.currentOffset;
+    const v = -state.velocity * 10;
+    const decelerate = () => {
+      offset += v * 0.85 ** (Date.now() % 100 / 10);
+      setOffset(id, offset, false);
+      if (Math.abs(v) > 0.5) {
+        animFrame = requestAnimationFrame(decelerate);
+      } else {
+        snapToNearest(id);
+      }
+    };
+    snapToNearest(id);
+  });
+
+  // Mouse (para pruebas en desktop)
+  let mouseDown = false;
+  let mouseStartY = 0;
+  let mouseStartOffset = 0;
+
+  wrapEl.addEventListener('mousedown', e => {
+    mouseDown = true;
+    mouseStartY = e.clientY;
+    mouseStartOffset = drums[id].currentOffset;
+    drums[id].listEl.style.transition = 'none';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!mouseDown) return;
+    const dy = mouseStartY - e.clientY;
+    setOffset(id, mouseStartOffset + dy, false);
+  });
+  window.addEventListener('mouseup', () => {
+    if (!mouseDown) return;
+    mouseDown = false;
+    snapToNearest(id);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// INICIALIZAR RUEDAS
+// ─────────────────────────────────────────────────────────────────
+(function init() {
+  // Días
+  const dias = Array.from({ length: 31 }, (_, i) => ({
+    label: String(i + 1).padStart(2, '0'),
+    value: i + 1
+  }));
+  crearDrum('dia', 'listDia', dias);
+
+  // Meses
+  const meses = [
+    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+  ].map((m, i) => ({ label: m, value: i + 1 }));
+  crearDrum('mes', 'listMes', meses);
+
+  // Años: año actual y anterior
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  const anios = [anioActual, anioActual - 1].map(a => ({ label: String(a), value: a }));
+  crearDrum('anio', 'listAnio', anios);
+
+  // Mostrar banner de instalación en iOS (no standalone)
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone && !localStorage.getItem('bannerCerrado')) {
+    document.getElementById('installBanner').classList.remove('hidden');
+  }
+
+  // Registrar service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+})();
+
+// ─────────────────────────────────────────────────────────────────
+// CALCULAR EDAD
+// ─────────────────────────────────────────────────────────────────
+function calcularEdadMeses(fechaNac) {
+  const hoy    = new Date();
+  const diffMs = hoy - fechaNac;
+  if (diffMs < 0) return null;
+  const diffDias = diffMs / (1000 * 60 * 60 * 24);
+  return Math.round(diffDias / 30.4375);
+}
+
+function actualizarEdad() {
+  const dia  = getVal('dia');
+  const mes  = getVal('mes');
+  const anio = getVal('anio');
+  const badge = document.getElementById('edadBadge');
+
+  if (!dia || !mes || !anio) { badge.classList.remove('visible'); return; }
+
+  const fechaNac = new Date(anio, mes - 1, dia);
+  const meses = calcularEdadMeses(fechaNac);
+
+  badge.classList.add('visible');
+  badge.classList.remove('fuera-rango');
+
+  if (meses === null || meses < 0) {
+    badge.classList.add('fuera-rango');
+    badge.innerHTML = 'La fecha ingresada es inválida.';
+  } else if (meses < 2) {
+    badge.classList.add('fuera-rango');
+    badge.innerHTML = `Patroclo tiene <b>${meses} ${meses === 1 ? 'mes' : 'meses'}</b>. La tabla aplica desde los <b>2 meses</b>.`;
+  } else if (meses > 8) {
+    badge.classList.add('fuera-rango');
+    badge.innerHTML = `Patroclo tiene <b>${meses} meses</b>. Giant Puppy aplica hasta los <b>8 meses</b>. Consultá con tu veterinario.`;
+  } else {
+    badge.innerHTML = `Edad calculada: <b>${meses} ${meses === 1 ? 'mes' : 'meses'}</b>`;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// INTERPOLACIÓN LINEAL
+// ─────────────────────────────────────────────────────────────────
+function interpolar(mes) {
+  for (let i = 0; i < tablaAlimento.length - 1; i++) {
+    const a = tablaAlimento[i];
+    const b = tablaAlimento[i + 1];
+    if (mes >= a.mes && mes <= b.mes) {
+      const t = (mes - a.mes) / (b.mes - a.mes);
+      return { gramos: Math.round(a.g + t * (b.g - a.g)), exacto: mes === a.mes || mes === b.mes, desde: a, hasta: b, t };
+    }
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CALCULAR RACIÓN
+// ─────────────────────────────────────────────────────────────────
+function calcular() {
+  const pesoVal = parseFloat(document.getElementById('peso').value);
+  if (isNaN(pesoVal) || pesoVal <= 0) {
+    alert('Por favor ingresa el peso actual de Patroclo.');
+    return;
+  }
+
+  const dia  = getVal('dia');
+  const mes  = getVal('mes');
+  const anio = getVal('anio');
+
+  const fechaNac = new Date(anio, mes - 1, dia);
+  const edadVal  = calcularEdadMeses(fechaNac);
+
+  if (edadVal === null || edadVal < 0) { alert('Fecha inválida.'); return; }
+  if (edadVal < 2) { alert(`Patroclo tiene ${edadVal} mes(es). La tabla aplica desde los 2 meses.`); return; }
+  if (edadVal > 8) { alert(`Patroclo tiene ${edadVal} meses. Giant Puppy aplica hasta los 8 meses. Consultá con tu veterinario.`); return; }
+
+  const result = interpolar(edadVal);
+  if (!result) return;
+
+  const { gramos, exacto, desde, hasta, t } = result;
+  const numTomas = edadVal < 6 ? 3 : 2;
+  const gramosPorToma = Math.round(gramos / numTomas);
+
+  document.getElementById('totalGramos').innerHTML = `${gramos} <em>g/día</em>`;
+  document.getElementById('frecLabel').textContent = `${numTomas} tomas al día`;
+
+  const grid = document.getElementById('tomasGrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= numTomas; i++) {
+    const row = document.createElement('div');
+    row.className = 'toma-row';
+    row.innerHTML = `
+      <div class="toma-label">
+        <strong>Toma ${i}</strong>
+        <span>de ${numTomas} en el día</span>
+      </div>
+      <div class="toma-val">${gramosPorToma}<span> g</span></div>`;
+    grid.appendChild(row);
+    if (i < numTomas) {
+      const d = document.createElement('div');
+      d.className = 'divider';
+      grid.appendChild(d);
+    }
+  }
+
+  const notaEl = document.getElementById('interpTexto');
+  if (exacto) {
+    notaEl.innerHTML = `<b>Edad ${edadVal} meses</b> corresponde a un valor directo de la tabla oficial de Royal Canin.`;
+  } else {
+    const pct = Math.round(t * 100);
+    notaEl.innerHTML = `<b>Interpolación lineal:</b> ${edadVal} meses está entre ${desde.mes} meses (${desde.g} g) y ${hasta.mes} meses (${hasta.g} g). Se calculó el ${pct}% del tramo.`;
+  }
+
+  const rango = tablaPeso[edadVal];
+  const alertBox = document.getElementById('alertaPeso');
+  const okBox    = document.getElementById('okPeso');
+  alertBox.classList.add('hidden');
+  okBox.classList.add('hidden');
+
+  if (pesoVal < rango.min) {
+    document.getElementById('alertaTexto').textContent =
+      `A los ${edadVal} meses el rango normal es ${rango.min}–${rango.max} kg. Patroclo pesa ${pesoVal} kg, por debajo del mínimo esperado. Consultá con tu veterinario.`;
+    alertBox.classList.remove('hidden');
+  } else if (pesoVal > rango.max) {
+    document.getElementById('alertaTexto').textContent =
+      `A los ${edadVal} meses el rango normal es ${rango.min}–${rango.max} kg. Patroclo pesa ${pesoVal} kg, por encima del máximo esperado. Consultá con tu veterinario.`;
+    alertBox.classList.remove('hidden');
+  } else {
+    document.getElementById('okTexto').textContent =
+      `Peso en rango normal para ${edadVal} meses (${rango.min}–${rango.max} kg). Patroclo está en ${pesoVal} kg.`;
+    okBox.classList.remove('hidden');
+  }
+
+  document.getElementById('results').classList.remove('hidden');
+  setTimeout(() => {
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+}
+
+function cerrarBanner() {
+  document.getElementById('installBanner').classList.add('hidden');
+  localStorage.setItem('bannerCerrado', '1');
+}
+</script>
+</body>
+</html>
