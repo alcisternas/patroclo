@@ -174,21 +174,26 @@
       /* sin transition aquí — se maneja por JS */
     }
 
-    /* Cada ítem */
+    /* Cada ítem — opacity + scale, GPU-acelerado en WebKit */
     .drum-item {
       height: var(--ih);
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 500;
-      color: var(--muted);
-      transition: color .15s, font-weight .15s;
-      will-change: transform;
+      font-size: 17px; font-weight: 600;
+      color: var(--text);
+      opacity: 0.28;
+      transform: scale(0.88);
+      transform-origin: center center;
+      will-change: opacity, transform;
     }
     .drum-item.selected {
-      color: var(--text);
-      font-weight: 700;
-      font-size: 18px;
+      opacity: 1;
+      transform: scale(1);
     }
-    .drum-item.placeholder { visibility: hidden; }
+    .drum-item.near {
+      opacity: 0.55;
+      transform: scale(0.94);
+    }
+    .drum-item.placeholder { visibility: hidden; opacity: 0; }
 
     /* Badge edad */
     .edad-badge {
@@ -575,6 +580,7 @@ function _applyOffset(id, offset, animate) {
   offset = Math.max(0, Math.min(offset, maxOff));
   s.offset = offset;
 
+  // Mover la lista
   if (animate) {
     s.list.style.transition = 'transform .28s cubic-bezier(.25,.46,.45,.94)';
   } else {
@@ -582,12 +588,22 @@ function _applyOffset(id, offset, animate) {
   }
   s.list.style.transform = `translateY(${-offset}px)`;
 
-  // Actualizar clase selected
+  // Índice más cercano al centro
   const newIdx = Math.round(offset / IH);
   s.idx = Math.max(0, Math.min(newIdx, s.items.length - 1));
+
+  // Actualizar clases y estilos de cada ítem real (sin placeholder)
   const allItems = s.list.querySelectorAll('.drum-item:not(.placeholder)');
+  const transVal = animate ? 'opacity .18s ease, transform .18s ease' : 'none';
+
   allItems.forEach((el, i) => {
-    el.classList.toggle('selected', i === s.idx);
+    el.style.transition = transVal;
+    el.classList.remove('selected', 'near');
+    if (i === s.idx) {
+      el.classList.add('selected');
+    } else if (i === s.idx - 1 || i === s.idx + 1) {
+      el.classList.add('near');
+    }
   });
 }
 
