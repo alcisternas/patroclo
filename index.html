@@ -66,25 +66,14 @@
       border: 1.5px solid var(--border);
       -webkit-user-select: none; user-select: none;
       cursor: grab;
-      /*
-        Franja central pintada como background del contenedor:
-        - capa 1: gradiente fade superior
-        - capa 2: gradiente fade inferior
-        - capa 3: franja verde central (posición exacta: ítem 3 de 5)
-        - capa 4: fondo base
-        Sin ningún elemento HTML encima de los ítems.
-      */
       background:
         linear-gradient(180deg, var(--bg) 0%, transparent 40%) top    / 100% calc(var(--ih) * 2) no-repeat,
         linear-gradient(0deg,   var(--bg) 0%, transparent 40%) bottom / 100% calc(var(--ih) * 2) no-repeat,
-        linear-gradient(var(--accent-lt), var(--accent-lt))
-          center / 100% var(--ih) no-repeat,
+        linear-gradient(var(--accent-lt), var(--accent-lt))    center / 100% var(--ih)            no-repeat,
         var(--bg);
-      /* Líneas de la franja como box-shadow en pseudoelemento */
     }
     .drum-wrap:active { cursor: grabbing; }
 
-    /* Líneas superior e inferior de la franja — sin tapar el texto */
     .drum-wrap::before,
     .drum-wrap::after {
       content: '';
@@ -93,15 +82,12 @@
       height: 1.5px;
       background: var(--accent);
       pointer-events: none;
-      z-index: 0; /* detrás de los ítems */
     }
     .drum-wrap::before { top:    calc(var(--ih) * 2); }
     .drum-wrap::after  { bottom: calc(var(--ih) * 2); }
 
-    /* Lista — z-index alto para estar siempre visible */
     .drum-list { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
 
-    /* Ítems — estilos base, JS pinta inline los estados */
     .drum-item {
       height: var(--ih);
       display: flex; align-items: center; justify-content: center;
@@ -136,8 +122,9 @@
     .cfg-meta-row .val { font-size: 12px; font-weight: 600; color: var(--text); }
     #updateMsg { margin-top: 8px; font-size: 12px; color: var(--accent); text-align: center; min-height: 16px; }
 
+    .btn-primary.mb { margin-bottom: 14px; }
+
     /* ── Resultados ── */
-    #results { margin-top: 0; }
 
     .status-box { margin: 0 16px 14px; border-radius: var(--radius); padding: 13px 16px; }
     .status-box.ok   { background: var(--accent-lt); border: 1px solid #C2D9C8; border-left: 4px solid var(--accent); }
@@ -257,7 +244,7 @@
     </button>
   </div>
 
-  <button class="btn-primary" style="margin-bottom:14px" onclick="calcular()">Calcular ración</button>
+  <button class="btn-primary mb" onclick="calcular()">Calcular ración</button>
 
   <div id="results" class="hidden">
     <div id="statusBox" class="status-box hidden"></div>
@@ -302,7 +289,7 @@
 // VERSIÓN — debe coincidir con CACHE_NAME en sw.js
 // El hook pre-commit actualiza ambas líneas automáticamente
 // ═══════════════════════════════════════════════════════
-const APP_VERSION = 'patroclo-20260817-1703'; /* AUTO:VERSION — no editar esta línea a mano */
+const APP_VERSION = 'patroclo-20260817-1727'; /* AUTO:VERSION — no editar esta línea a mano */
 
 // ═══════════════════════════════════════════════════════
 // TABLA ROYAL CANIN GIANT PUPPY — peso adulto esperado 70 kg
@@ -705,9 +692,9 @@ function iniciarSW() {
       const newWorker = reg.installing;
       newWorker.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // Hay una versión nueva lista — habilitar botón
           document.getElementById('swStatus').textContent  = 'Actualización disponible';
-          document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista. Toca el botón para aplicarla.';
+          document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista.';
+          document.getElementById('btnUpdate').textContent = 'Aplicar actualización';
           document.getElementById('btnUpdate').disabled    = false;
         }
       });
@@ -716,11 +703,13 @@ function iniciarSW() {
     // Estado inicial
     if (reg.waiting) {
       document.getElementById('swStatus').textContent  = 'Actualización disponible';
-      document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista. Toca el botón para aplicarla.';
+      document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista.';
+      document.getElementById('btnUpdate').textContent = 'Aplicar actualización';
       document.getElementById('btnUpdate').disabled    = false;
     } else if (reg.active) {
-      document.getElementById('swStatus').textContent = 'Al día';
-      document.getElementById('btnUpdate').disabled   = false; // permitir buscar manualmente
+      document.getElementById('swStatus').textContent  = 'Al día';
+      document.getElementById('btnUpdate').textContent = 'Buscar actualización';
+      document.getElementById('btnUpdate').disabled    = false;
     }
 
     // Forzar verificación inmediata
