@@ -59,37 +59,54 @@
     .drum-col { display: flex; flex-direction: column; gap: 5px; }
     .drum-sublabel { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: center; }
 
-    .drum-wrap { position: relative; height: calc(var(--ih) * 5); overflow: hidden; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border); -webkit-user-select: none; user-select: none; cursor: grab; }
+    .drum-wrap {
+      position: relative;
+      height: calc(var(--ih) * 5);
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      -webkit-user-select: none; user-select: none;
+      cursor: grab;
+      /*
+        Franja central pintada como background del contenedor:
+        - capa 1: gradiente fade superior
+        - capa 2: gradiente fade inferior
+        - capa 3: franja verde central (posición exacta: ítem 3 de 5)
+        - capa 4: fondo base
+        Sin ningún elemento HTML encima de los ítems.
+      */
+      background:
+        linear-gradient(180deg, var(--bg) 0%, transparent 40%) top    / 100% calc(var(--ih) * 2) no-repeat,
+        linear-gradient(0deg,   var(--bg) 0%, transparent 40%) bottom / 100% calc(var(--ih) * 2) no-repeat,
+        linear-gradient(var(--accent-lt), var(--accent-lt))
+          center / 100% var(--ih) no-repeat,
+        var(--bg);
+      /* Líneas de la franja como box-shadow en pseudoelemento */
+    }
     .drum-wrap:active { cursor: grabbing; }
 
-    /* Franja central — z-index alto para que se vea sobre los ítems */
-    .drum-sel {
-      position: absolute; left: 0; right: 0;
-      top: calc(var(--ih) * 2); height: var(--ih);
-      background: var(--accent-lt);
-      border-top: 1.5px solid var(--accent);
-      border-bottom: 1.5px solid var(--accent);
-      border-radius: 8px;
-      z-index: 2; pointer-events: none;
+    /* Líneas superior e inferior de la franja — sin tapar el texto */
+    .drum-wrap::before,
+    .drum-wrap::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1.5px;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 0; /* detrás de los ítems */
     }
+    .drum-wrap::before { top:    calc(var(--ih) * 2); }
+    .drum-wrap::after  { bottom: calc(var(--ih) * 2); }
 
-    /* Fade top/bottom — z-index sobre la franja */
-    .drum-fade-top, .drum-fade-bot {
-      position: absolute; left: 0; right: 0;
-      height: calc(var(--ih) * 2.2);
-      z-index: 3; pointer-events: none;
-    }
-    .drum-fade-top { top: 0; background: linear-gradient(180deg, var(--bg) 30%, transparent 100%); }
-    .drum-fade-bot { bottom: 0; background: linear-gradient(0deg,   var(--bg) 30%, transparent 100%); }
-
+    /* Lista — z-index alto para estar siempre visible */
     .drum-list { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
 
-    /* Ítems — estilos base, el JS pinta inline los estados */
+    /* Ítems — estilos base, JS pinta inline los estados */
     .drum-item {
       height: var(--ih);
       display: flex; align-items: center; justify-content: center;
       font-size: 15px; font-weight: 500;
-      /* color y opacidad los controla JS con style inline */
     }
     .drum-item.is-placeholder { visibility: hidden; }
 
@@ -186,27 +203,18 @@
         <div class="drum-col">
           <span class="drum-sublabel">Día</span>
           <div class="drum-wrap" id="wrapDia">
-            <div class="drum-sel"></div>
-            <div class="drum-fade-top"></div>
-            <div class="drum-fade-bot"></div>
             <div class="drum-list" id="listDia"></div>
           </div>
         </div>
         <div class="drum-col">
           <span class="drum-sublabel">Mes</span>
           <div class="drum-wrap" id="wrapMes">
-            <div class="drum-sel"></div>
-            <div class="drum-fade-top"></div>
-            <div class="drum-fade-bot"></div>
             <div class="drum-list" id="listMes"></div>
           </div>
         </div>
         <div class="drum-col">
           <span class="drum-sublabel">Año</span>
           <div class="drum-wrap" id="wrapAnio">
-            <div class="drum-sel"></div>
-            <div class="drum-fade-top"></div>
-            <div class="drum-fade-bot"></div>
             <div class="drum-list" id="listAnio"></div>
           </div>
         </div>
@@ -295,7 +303,7 @@
 // VERSIÓN — debe coincidir con CACHE_NAME en sw.js
 // El hook pre-commit actualiza ambas líneas automáticamente
 // ═══════════════════════════════════════════════════════
-const APP_VERSION = 'patroclo-20260817-1632'; /* AUTO:VERSION — no editar esta línea a mano */
+const APP_VERSION = 'patroclo-20260817-1650'; /* AUTO:VERSION — no editar esta línea a mano */
 
 // ═══════════════════════════════════════════════════════
 // TABLA ROYAL CANIN GIANT PUPPY — peso adulto esperado 70 kg
