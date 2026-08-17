@@ -25,224 +25,80 @@
       --warn-bd:   #E8BFBF;
       --radius:    14px;
       --shadow:    0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
-      --ih:        48px; /* item height rueda */
+      --ih:        48px;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      background: var(--bg); color: var(--text);
+      min-height: 100dvh; -webkit-font-smoothing: antialiased; overflow-x: hidden;
     }
 
-    .screen {
-      min-height: 100dvh;
-      padding: 0 0 60px;
-      display: none;
-    }
+    .screen { min-height: 100dvh; padding: 0 0 60px; display: none; }
     .screen.active { display: block; }
 
-    /* ═══════════════════════════════════════
-       HEADER
-    ═══════════════════════════════════════ */
-    .app-header {
-      padding: 56px 20px 16px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-    .app-header .title-block .eyebrow {
-      font-size: 11px; font-weight: 600; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
-    }
-    .app-header .title-block h1 {
-      font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.1;
-    }
-    .app-header .title-block p {
-      margin-top: 4px; font-size: 13px; color: var(--muted);
-    }
-    .btn-settings {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: 10px; width: 40px; height: 40px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; flex-shrink: 0; margin-top: 4px;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow: var(--shadow);
-    }
+    /* ── Header ── */
+    .app-header { padding: 56px 20px 16px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-header .title-block .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .app-header .title-block h1 { font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.1; }
+    .app-header .title-block p { margin-top: 4px; font-size: 13px; color: var(--muted); }
+    .btn-settings { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 4px; -webkit-tap-highlight-color: transparent; box-shadow: var(--shadow); }
     .btn-settings svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.8; }
 
-    /* ═══════════════════════════════════════
-       CARD
-    ═══════════════════════════════════════ */
-    .card {
-      background: var(--surface); border-radius: var(--radius);
-      box-shadow: var(--shadow); margin: 0 16px 14px; padding: 20px;
-    }
+    /* ── Card ── */
+    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); margin: 0 16px 14px; padding: 20px; }
     .field + .field { margin-top: 18px; }
-    .field-label {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
-      display: block;
-    }
+    .field-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: block; }
 
-    /* Input texto */
-    input[type="text"], input[type="number"] {
-      width: 100%; height: 50px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      padding: 0 14px; font-size: 19px; font-weight: 500;
-      color: var(--text); background: var(--bg);
-      -webkit-appearance: none; appearance: none; outline: none;
-      transition: border-color .15s;
-      font-family: inherit;
-    }
-    input[type="text"]:focus,
-    input[type="number"]:focus { border-color: var(--accent); background: #fff; }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
+    input[type="text"], input[type="number"] { width: 100%; height: 50px; border: 1.5px solid var(--border); border-radius: 10px; padding: 0 14px; font-size: 19px; font-weight: 500; color: var(--text); background: var(--bg); -webkit-appearance: none; appearance: none; outline: none; transition: border-color .15s; font-family: inherit; }
+    input[type="text"]:focus, input[type="number"]:focus { border-color: var(--accent); background: #fff; }
+    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
     .input-with-unit { position: relative; }
     .input-with-unit input { padding-right: 48px; }
-    .input-unit {
-      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      font-size: 15px; font-weight: 500; color: var(--muted); pointer-events: none;
-    }
+    .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 500; color: var(--muted); pointer-events: none; }
 
-    /* ═══════════════════════════════════════
-       DRUM PICKER — rediseño completo
-    ═══════════════════════════════════════ */
-    .drum-row {
-      display: grid;
-      grid-template-columns: 80px 1fr 88px;
-      gap: 8px;
-      touch-action: none; /* evita scroll de página durante el drag */
-    }
+    /* ── Drum Picker ── */
+    .drum-row { display: grid; grid-template-columns: 80px 1fr 88px; gap: 8px; touch-action: none; }
     .drum-col { display: flex; flex-direction: column; gap: 5px; }
-    .drum-sublabel {
-      font-size: 10px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--muted); text-align: center;
-    }
+    .drum-sublabel { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: center; }
 
-    /* Contenedor de la rueda */
-    .drum-wrap {
-      position: relative;
-      height: calc(var(--ih) * 5); /* 5 ítems visibles */
-      overflow: hidden;
-      border-radius: 12px;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      -webkit-user-select: none; user-select: none;
-      cursor: grab;
-    }
+    .drum-wrap { position: relative; height: calc(var(--ih) * 5); overflow: hidden; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border); -webkit-user-select: none; user-select: none; cursor: grab; }
     .drum-wrap:active { cursor: grabbing; }
 
-    /* Gradientes fade top/bottom */
-    .drum-fade-top,
-    .drum-fade-bot {
-      position: absolute; left: 0; right: 0; height: calc(var(--ih) * 2);
-      z-index: 3; pointer-events: none;
-    }
-    .drum-fade-top {
-      top: 0;
-      background: linear-gradient(180deg, var(--bg) 0%, transparent 100%);
-    }
-    .drum-fade-bot {
-      bottom: 0;
-      background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
-    }
+    .drum-fade-top, .drum-fade-bot { position: absolute; left: 0; right: 0; height: calc(var(--ih) * 2); z-index: 3; pointer-events: none; }
+    .drum-fade-top { top: 0; background: linear-gradient(180deg, var(--bg) 20%, transparent 100%); }
+    .drum-fade-bot { bottom: 0; background: linear-gradient(0deg, var(--bg) 20%, transparent 100%); }
 
-    /* Franja de selección central */
-    .drum-sel {
-      position: absolute;
-      left: 6px; right: 6px;
-      top: calc(var(--ih) * 2);
-      height: var(--ih);
-      background: var(--accent-lt);
-      border-radius: 8px;
-      border-top: 1.5px solid var(--accent);
-      border-bottom: 1.5px solid var(--accent);
-      z-index: 2;
-      pointer-events: none;
-    }
+    .drum-sel { position: absolute; left: 6px; right: 6px; top: calc(var(--ih) * 2); height: var(--ih); background: var(--accent-lt); border-radius: 8px; border-top: 1.5px solid var(--accent); border-bottom: 1.5px solid var(--accent); z-index: 2; pointer-events: none; }
 
-    /* Lista deslizante */
-    .drum-list {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      z-index: 1;
-      /* sin transition aquí — se maneja por JS */
-    }
+    .drum-list { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
 
-    /* Cada ítem — opacity + scale, GPU-acelerado en WebKit */
-    .drum-item {
-      height: var(--ih);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; font-weight: 600;
-      color: var(--text);
-      opacity: 0.28;
-      transform: scale(0.88);
-      transform-origin: center center;
-      will-change: opacity, transform;
-    }
-    .drum-item.selected {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .drum-item.near {
-      opacity: 0.55;
-      transform: scale(0.94);
-    }
+    .drum-item { height: var(--ih); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: var(--text); opacity: 0.25; transform: scale(0.86); transform-origin: center center; will-change: opacity, transform; }
+    .drum-item.selected { opacity: 1; transform: scale(1); font-weight: 700; }
+    .drum-item.near { opacity: 0.5; transform: scale(0.93); }
     .drum-item.placeholder { visibility: hidden; opacity: 0; }
 
     /* Badge edad */
-    .edad-badge {
-      margin-top: 10px; padding: 9px 13px;
-      background: var(--accent-lt); border-radius: 8px;
-      font-size: 13px; color: #1E4A2B; line-height: 1.4;
-      display: none;
-    }
+    .edad-badge { margin-top: 10px; padding: 9px 13px; background: var(--accent-lt); border-radius: 8px; font-size: 13px; color: #1E4A2B; line-height: 1.4; display: none; }
     .edad-badge.show { display: block; }
     .edad-badge.warn { background: var(--warn-lt); color: #7A2020; }
     .edad-badge b { font-weight: 700; }
 
-    /* ═══════════════════════════════════════
-       BOTONES
-    ═══════════════════════════════════════ */
-    .btn-primary {
-      display: block; width: calc(100% - 32px);
-      margin: 0 16px; height: 54px;
-      background: var(--accent); color: #fff; border: none;
-      border-radius: var(--radius); font-size: 17px; font-weight: 600;
-      letter-spacing: -.1px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity .12s;
-      font-family: inherit;
-    }
+    /* ── Botones ── */
+    .btn-primary { display: block; width: calc(100% - 32px); margin: 0 16px; height: 54px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 600; letter-spacing: -.1px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .12s; font-family: inherit; }
     .btn-primary:active { opacity: .82; }
-    .btn-primary.secondary {
-      background: var(--surface); color: var(--accent);
-      border: 1.5px solid var(--accent);
-    }
 
-    /* ═══════════════════════════════════════
-       RESULTADOS
-    ═══════════════════════════════════════ */
+    /* ── Setup header ── */
+    #screenSetup .setup-header { padding: 60px 20px 24px; text-align: center; }
+    #screenSetup .setup-header h2 { font-size: 24px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 6px; }
+    #screenSetup .setup-header p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Resultados ── */
     #results { margin-top: 20px; }
 
-    .status-box {
-      margin: 0 16px 14px;
-      border-radius: var(--radius); padding: 13px 16px;
-      border-left-width: 4px; border-left-style: solid;
-    }
-    .status-box.ok {
-      background: var(--accent-lt); border-color: var(--accent);
-      border: 1px solid #C2D9C8; border-left: 4px solid var(--accent);
-    }
-    .status-box.warn {
-      background: var(--warn-lt);
-      border: 1px solid var(--warn-bd); border-left: 4px solid var(--warn);
-    }
+    .status-box { margin: 0 16px 14px; border-radius: var(--radius); padding: 13px 16px; }
+    .status-box.ok { background: var(--accent-lt); border: 1px solid #C2D9C8; border-left: 4px solid var(--accent); }
+    .status-box.warn { background: var(--warn-lt); border: 1px solid var(--warn-bd); border-left: 4px solid var(--warn); }
     .status-box .st-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
     .status-box.ok .st-title { color: var(--accent); }
     .status-box.warn .st-title { color: var(--warn); }
@@ -250,120 +106,51 @@
     .status-box.ok p { color: #1E4A2B; }
     .status-box.warn p { color: #7A2020; }
 
-    /* Tarjeta resultado principal */
-    .result-card {
-      background: var(--surface); border-radius: var(--radius);
-      box-shadow: var(--shadow); margin: 0 16px 12px; overflow: hidden;
-    }
+    .result-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); margin: 0 16px 12px; overflow: hidden; }
 
-    /* Header verde — rango del fabricante */
-    .rc-fab {
-      background: var(--accent); padding: 16px 18px;
-    }
-    .rc-fab .rc-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: rgba(255,255,255,.65);
-      margin-bottom: 6px;
-    }
-    .rc-fab .rc-range {
-      display: flex; align-items: baseline; gap: 8px;
-    }
-    .rc-fab .rc-range .rval {
-      font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -1px; line-height: 1;
-    }
-    .rc-fab .rc-range .rsep {
-      font-size: 22px; font-weight: 300; color: rgba(255,255,255,.6);
-    }
-    .rc-fab .rc-range .runit {
-      font-size: 14px; font-weight: 400; color: rgba(255,255,255,.75);
-    }
-    .rc-fab .rc-sub {
-      margin-top: 4px; font-size: 12px; color: rgba(255,255,255,.6);
-    }
+    /* Rango fabricante — header verde */
+    .rc-fab { background: var(--accent); padding: 16px 18px; }
+    .rc-fab .rc-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 8px; }
+    .rc-fab .rc-range { display: flex; align-items: baseline; gap: 6px; }
+    .rc-fab .rc-range .rval { font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -1px; line-height: 1; }
+    .rc-fab .rc-range .rsep { font-size: 22px; font-weight: 300; color: rgba(255,255,255,.5); }
+    .rc-fab .rc-range .runit { font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
+    .rc-fab .rc-sub { margin-top: 4px; font-size: 12px; color: rgba(255,255,255,.6); }
 
-    /* Sección tomas — punto medio */
+    /* Tomas — punto medio */
     .rc-body { padding: 16px 18px; }
-    .rc-body .rc-mid-label {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
-    }
-    .toma-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 0;
-    }
+    .rc-body .rc-mid-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .toma-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
     .toma-left strong { display: block; font-size: 15px; font-weight: 600; color: var(--text); }
     .toma-left span { font-size: 12px; color: var(--muted); }
     .toma-val { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; }
     .toma-val small { font-size: 13px; font-weight: 500; color: var(--muted); }
-
     .row-div { height: 1px; background: var(--border); margin: 2px 0; }
 
-    .rc-footer {
-      border-top: 1px solid var(--border);
-      padding: 10px 18px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .rc-footer { border-top: 1px solid var(--border); padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
     .rc-footer span { font-size: 12px; color: var(--muted); }
-    .rc-footer strong { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
+    .rc-footer strong { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
 
-    /* Nota tabla */
-    .table-note {
-      margin: 0 16px 0; padding: 10px 14px;
-      background: var(--surface); border-radius: 10px;
-      border: 1px solid var(--border);
-      font-size: 12px; color: var(--muted); line-height: 1.5;
-    }
+    .table-note { margin: 0 16px; padding: 10px 14px; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.5; }
     .table-note b { color: var(--text); }
 
-    /* ═══════════════════════════════════════
-       BANNER INSTALAR
-    ═══════════════════════════════════════ */
-    #installBanner {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--accent); color: #fff;
-      padding: 14px 20px 32px;
-      font-size: 13px; line-height: 1.5;
-      display: flex; align-items: flex-start; gap: 12px;
-      z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.15);
-    }
+    /* ── Banner instalar ── */
+    #installBanner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--accent); color: #fff; padding: 14px 20px 32px; font-size: 13px; line-height: 1.5; display: flex; align-items: flex-start; gap: 12px; z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.15); }
     #installBanner p { flex: 1; }
     #installBanner b { display: block; font-size: 14px; margin-bottom: 3px; }
-    #installBanner .btn-close {
-      background: none; border: none; color: rgba(255,255,255,.7);
-      font-size: 24px; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0;
-    }
-
-    /* ═══════════════════════════════════════
-       PANTALLA SETUP
-    ═══════════════════════════════════════ */
-    #screenSetup .setup-header {
-      padding: 60px 20px 24px;
-      text-align: center;
-    }
-    #screenSetup .setup-header h2 {
-      font-size: 24px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 6px;
-    }
-    #screenSetup .setup-header p {
-      font-size: 14px; color: var(--muted); line-height: 1.5;
-    }
-    .setup-divider {
-      height: 1px; background: var(--border); margin: 4px 16px 16px;
-    }
+    #installBanner .btn-close { background: none; border: none; color: rgba(255,255,255,.7); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; }
 
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 1 — CONFIGURACIÓN INICIAL
-═══════════════════════════════════════════ -->
+<!-- PANTALLA CONFIGURACIÓN -->
 <div id="screenSetup" class="screen">
   <div class="setup-header">
     <h2>Configuración inicial</h2>
     <p>Estos datos se guardan en tu dispositivo y no tendrás que ingresarlos de nuevo.</p>
   </div>
-
   <div class="card">
     <div class="field">
       <span class="field-label">Nombre del perro</span>
@@ -403,24 +190,21 @@
       <div class="edad-badge" id="badgeSetup"></div>
     </div>
   </div>
-
   <button class="btn-primary" onclick="guardarConfig()">Guardar y continuar</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 2 — USO DIARIO
-═══════════════════════════════════════════ -->
+<!-- PANTALLA PRINCIPAL -->
 <div id="screenMain" class="screen">
   <div class="app-header">
     <div class="title-block">
-      <p class="eyebrow">Royal Canin Maxi Puppy</p>
+      <p class="eyebrow">Royal Canin Giant Puppy</p>
       <h1 id="headerNombre">—</h1>
       <p id="headerSub">—</p>
     </div>
     <button class="btn-settings" onclick="irAConfig()" title="Configuración">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
   </div>
@@ -429,8 +213,7 @@
     <div class="field">
       <span class="field-label">Peso actual</span>
       <div class="input-with-unit">
-        <input type="number" id="pesoInput" min="1" max="100"
-               step="0.1" inputmode="decimal" placeholder="0.0" />
+        <input type="number" id="pesoInput" min="1" max="100" step="0.1" inputmode="decimal" placeholder="0.0" />
         <span class="input-unit">kg</span>
       </div>
     </div>
@@ -440,36 +223,28 @@
 
   <div id="results" class="hidden">
     <div id="statusBox" class="status-box hidden"></div>
-
     <div class="result-card">
-      <!-- Rango fabricante -->
       <div class="rc-fab">
         <div class="rc-eyebrow">Rango recomendado por fabricante</div>
         <div class="rc-range">
-          <span class="rval" id="resMin">—</span>
-          <span class="rsep">–</span>
-          <span class="rval" id="resMax">—</span>
+          <span class="rval" id="resGramos">—</span>
           <span class="runit">g / día</span>
         </div>
-        <div class="rc-sub" id="resBanda">—</div>
+        <div class="rc-sub" id="resSub">—</div>
       </div>
-
-      <!-- Tomas punto medio -->
       <div class="rc-body">
         <div class="rc-mid-label">Punto medio · <span id="resMid">—</span> g/día · <span id="resNTomas">—</span> tomas</div>
         <div id="tomasGrid"></div>
       </div>
-
       <div class="rc-footer">
-        <span>Etapa</span>
-        <strong id="resEtapa">—</strong>
+        <span>Alimento</span>
+        <strong>Royal Canin Giant Puppy</strong>
       </div>
       <div class="rc-footer" style="border-top:none;padding-top:0">
-        <span>Alimento</span>
-        <strong>Royal Canin Maxi Puppy</strong>
+        <span>Válido hasta</span>
+        <strong>8 meses → Giant Junior</strong>
       </div>
     </div>
-
     <div class="table-note">
       <p id="tableNoteText"></p>
     </div>
@@ -478,11 +253,7 @@
 
 <!-- Banner instalar PWA -->
 <div id="installBanner" class="hidden">
-  <p>
-    <b>Instalar como app</b>
-    Tocá el botón compartir <strong>⎙</strong> de Safari y elegí
-    <strong>"Agregar a pantalla de inicio"</strong>.
-  </p>
+  <p><b>Instalar como app</b>Toca el botón compartir <strong>⎙</strong> de Safari y elige <strong>"Agregar a pantalla de inicio"</strong>.</p>
   <button class="btn-close" onclick="cerrarBanner()">×</button>
 </div>
 
@@ -490,51 +261,64 @@
 'use strict';
 
 // ═══════════════════════════════════════════════════════
-// TABLA ROYAL CANIN MAXI PUPPY
-// Estructura: { pesoMin, pesoMax, etapa, gMin, gMax }
-// etapa: rango de meses [mesDesde, mesHasta] (inclusive)
+// TABLA ROYAL CANIN GIANT PUPPY — peso adulto esperado 70 kg
+// Fuente: bolsa del producto (valores reales del usuario)
+// Interpolación lineal para meses intermedios (5, 6, 7)
 // ═══════════════════════════════════════════════════════
-const TABLA = [
-  { pMin: 15, pMax: 25, eMin: 2,  eMax: 3,  gMin: 450, gMax: 640 },
-  { pMin: 15, pMax: 25, eMin: 4,  eMax: 5,  gMin: 380, gMax: 540 },
-  { pMin: 26, pMax: 35, eMin: 4,  eMax: 5,  gMin: 560, gMax: 700 },
-  { pMin: 26, pMax: 35, eMin: 6,  eMax: 8,  gMin: 460, gMax: 580 },
-  { pMin: 36, pMax: 45, eMin: 6,  eMax: 8,  gMin: 600, gMax: 710 },
-  { pMin: 36, pMax: 45, eMin: 9,  eMax: 11, gMin: 520, gMax: 620 },
-  { pMin: 46, pMax: 55, eMin: 6,  eMax: 8,  gMin: 730, gMax: 830 },
-  { pMin: 46, pMax: 55, eMin: 9,  eMax: 11, gMin: 630, gMax: 730 },
-  { pMin: 46, pMax: 55, eMin: 12, eMax: 15, gMin: 570, gMax: 660 },
-  { pMin: 56, pMax: 65, eMin: 9,  eMax: 11, gMin: 750, gMax: 840 },
-  { pMin: 56, pMax: 65, eMin: 12, eMax: 15, gMin: 670, gMax: 760 },
-  { pMin: 66, pMax: 75, eMin: 12, eMax: 15, gMin: 780, gMax: 860 },
+const TABLA_GIANT = [
+  { mes: 2, g: 422 },
+  { mes: 3, g: 557 },
+  { mes: 4, g: 621 },
+  { mes: 8, g: 858 },
 ];
 
-// Etiqueta legible de la etapa
-function etapaLabel(eMin, eMax) {
-  return `${eMin}${eMin !== eMax ? '–' + eMax : ''} ${eMax === 1 ? 'mes' : 'meses'}`;
-}
+// Aplica desde los 2 hasta los 8 meses
+const EDAD_MIN = 2;
+const EDAD_MAX = 8;
 
-// Buscar fila en tabla
-function buscarTabla(pesoKg, edadMes) {
-  return TABLA.find(r =>
-    pesoKg >= r.pMin && pesoKg <= r.pMax &&
-    edadMes >= r.eMin && edadMes <= r.eMax
-  ) || null;
+function calcularGramos(edadMes) {
+  // Buscar el segmento correspondiente e interpolar
+  for (let i = 0; i < TABLA_GIANT.length - 1; i++) {
+    const a = TABLA_GIANT[i];
+    const b = TABLA_GIANT[i + 1];
+    if (edadMes >= a.mes && edadMes <= b.mes) {
+      const t = (edadMes - a.mes) / (b.mes - a.mes);
+      return {
+        g: Math.round(a.g + t * (b.g - a.g)),
+        interpolado: edadMes !== a.mes && edadMes !== b.mes,
+        desde: a,
+        hasta: b,
+      };
+    }
+  }
+  return null;
 }
 
 // ═══════════════════════════════════════════════════════
-// DRUM PICKER — motor de física
+// RANGOS DE PESO NORMAL — Gran Danés macho por edad
 // ═══════════════════════════════════════════════════════
-const IH = 48;   // altura ítem px (debe coincidir con --ih)
-const PAD = 2;   // padding items arriba/abajo
+const RANGO_PESO = {
+  2: { min: 15, max: 20 },
+  3: { min: 22, max: 28 },
+  4: { min: 30, max: 36 },
+  5: { min: 35, max: 43 },
+  6: { min: 40, max: 50 },
+  7: { min: 45, max: 55 },
+  8: { min: 50, max: 60 },
+};
 
-const _drums = {}; // estado por id
+// ═══════════════════════════════════════════════════════
+// DRUM PICKER
+// ═══════════════════════════════════════════════════════
+const IH  = 48; // altura ítem en px — debe coincidir con --ih
+const PAD = 2;  // ítems vacíos arriba y abajo
+
+const _drums = {};
 
 function initDrum(wrapId, listId, items, onChangeFn) {
   const wrap = document.getElementById(wrapId);
   const list = document.getElementById(listId);
 
-  // Construir ítems
   list.innerHTML = '';
   for (let i = 0; i < PAD; i++) {
     const el = document.createElement('div');
@@ -555,21 +339,17 @@ function initDrum(wrapId, listId, items, onChangeFn) {
     list.appendChild(el);
   }
 
-  const state = {
+  _drums[wrapId] = {
     wrap, list, items,
-    idx: 0,           // índice seleccionado (en items[])
-    offset: 0,        // px desplazado (0 = primer ítem centrado)
+    idx: 0, offset: 0,
     dragging: false,
-    startY: 0,
-    startOffset: 0,
-    lastY: 0,
-    lastTime: 0,
-    velocity: 0,
-    rafId: null,
+    startY: 0, startOffset: 0,
+    lastY: 0, lastTime: 0,
+    velocity: 0, rafId: null,
     onChange: onChangeFn || (() => {}),
   };
-  _drums[wrapId] = state;
 
+  // Aplicar estado inicial con clases correctas
   _applyOffset(wrapId, 0, false);
   _attachEvents(wrapId);
 }
@@ -580,24 +360,19 @@ function _applyOffset(id, offset, animate) {
   offset = Math.max(0, Math.min(offset, maxOff));
   s.offset = offset;
 
-  // Mover la lista
-  if (animate) {
-    s.list.style.transition = 'transform .28s cubic-bezier(.25,.46,.45,.94)';
-  } else {
-    s.list.style.transition = 'none';
-  }
+  s.list.style.transition = animate
+    ? 'transform .28s cubic-bezier(.25,.46,.45,.94)'
+    : 'none';
   s.list.style.transform = `translateY(${-offset}px)`;
 
-  // Índice más cercano al centro
   const newIdx = Math.round(offset / IH);
   s.idx = Math.max(0, Math.min(newIdx, s.items.length - 1));
 
-  // Actualizar clases y estilos de cada ítem real (sin placeholder)
-  const allItems = s.list.querySelectorAll('.drum-item:not(.placeholder)');
-  const transVal = animate ? 'opacity .18s ease, transform .18s ease' : 'none';
-
-  allItems.forEach((el, i) => {
-    el.style.transition = transVal;
+  // Actualizar clases visuales en ítems reales (sin placeholder)
+  const realItems = s.list.querySelectorAll('.drum-item:not(.placeholder)');
+  realItems.forEach((el, i) => {
+    // Forzar reflow para que la transición de opacity funcione en WebKit
+    el.style.transition = animate ? 'opacity .18s ease, transform .18s ease' : 'none';
     el.classList.remove('selected', 'near');
     if (i === s.idx) {
       el.classList.add('selected');
@@ -615,66 +390,59 @@ function _snap(id) {
 }
 
 function _attachEvents(id) {
-  const s = _drums[id];
+  const s   = _drums[id];
   const wrap = s.wrap;
 
   // ── Touch ──
   wrap.addEventListener('touchstart', e => {
     cancelAnimationFrame(s.rafId);
-    s.dragging = true;
-    s.startY = e.touches[0].clientY;
+    s.dragging    = true;
+    s.startY      = e.touches[0].clientY;
     s.startOffset = s.offset;
-    s.lastY = s.startY;
-    s.lastTime = Date.now();
-    s.velocity = 0;
+    s.lastY       = s.startY;
+    s.lastTime    = Date.now();
+    s.velocity    = 0;
     s.list.style.transition = 'none';
     e.preventDefault();
   }, { passive: false });
 
   wrap.addEventListener('touchmove', e => {
     if (!s.dragging) return;
-    const y = e.touches[0].clientY;
+    const y   = e.touches[0].clientY;
     const now = Date.now();
-    const dt = now - s.lastTime || 1;
-    s.velocity = (s.lastY - y) / dt; // px/ms positivo = scroll hacia arriba
-    s.lastY = y;
+    const dt  = Math.max(now - s.lastTime, 1);
+    s.velocity = (s.lastY - y) / dt;
+    s.lastY    = y;
     s.lastTime = now;
-    const dy = s.startY - y;
-    _applyOffset(id, s.startOffset + dy, false);
+    _applyOffset(id, s.startOffset + (s.startY - y), false);
     e.preventDefault();
   }, { passive: false });
 
   wrap.addEventListener('touchend', () => {
     if (!s.dragging) return;
     s.dragging = false;
-    // Inercia
-    let vel = s.velocity; // px/ms
+    let vel    = s.velocity;
     let offset = s.offset;
+
     const step = () => {
-      vel *= 0.88; // fricción
-      offset += vel * 16; // ~16ms por frame
+      vel    *= 0.85;
+      offset += vel * 16;
       _applyOffset(id, offset, false);
-      if (Math.abs(vel) > 0.05) {
+      if (Math.abs(vel) > 0.08) {
         s.rafId = requestAnimationFrame(step);
       } else {
         _snap(id);
       }
     };
-    if (Math.abs(vel) > 0.1) {
-      s.rafId = requestAnimationFrame(step);
-    } else {
-      _snap(id);
-    }
+
+    Math.abs(vel) > 0.12 ? requestAnimationFrame(step) : _snap(id);
   });
 
-  // ── Mouse (desktop / testing) ──
+  // ── Mouse (desktop / pruebas) ──
   let mDown = false, mStartY = 0, mStartOff = 0;
   wrap.addEventListener('mousedown', e => {
-    mDown = true;
-    mStartY = e.clientY;
-    mStartOff = s.offset;
-    s.list.style.transition = 'none';
-    e.preventDefault();
+    mDown = true; mStartY = e.clientY; mStartOff = s.offset;
+    s.list.style.transition = 'none'; e.preventDefault();
   });
   window.addEventListener('mousemove', e => {
     if (!mDown) return;
@@ -682,8 +450,7 @@ function _attachEvents(id) {
   });
   window.addEventListener('mouseup', () => {
     if (!mDown) return;
-    mDown = false;
-    _snap(id);
+    mDown = false; _snap(id);
   });
 }
 
@@ -692,36 +459,30 @@ function drumGetVal(wrapId) {
   return s ? s.items[s.idx].value : null;
 }
 
-function drumSetIdx(wrapId, idx, animate) {
+function drumSetIdx(wrapId, idx) {
   const s = _drums[wrapId];
   if (!s) return;
-  const target = Math.max(0, Math.min(idx, s.items.length - 1)) * IH;
-  _applyOffset(wrapId, target, animate !== false);
+  _applyOffset(wrapId, Math.max(0, Math.min(idx, s.items.length - 1)) * IH, false);
 }
 
 // ═══════════════════════════════════════════════════════
-// LISTAS DE DATOS PARA LAS RUEDAS
+// DATOS DE LAS RUEDAS
 // ═══════════════════════════════════════════════════════
-const DIAS  = Array.from({ length: 31 }, (_, i) => ({ label: String(i+1).padStart(2,'0'), value: i+1 }));
+const DIAS  = Array.from({ length: 31 }, (_, i) => ({ label: String(i + 1).padStart(2, '0'), value: i + 1 }));
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-               .map((m, i) => ({ label: m, value: i+1 }));
-const hoy = new Date();
-const ANIOS = (() => {
-  const arr = [];
-  for (let a = hoy.getFullYear(); a >= hoy.getFullYear() - 2; a--) {
-    arr.push({ label: String(a), value: a });
-  }
-  return arr;
-})();
+              .map((m, i) => ({ label: m, value: i + 1 }));
+const anioActual = new Date().getFullYear();
+const ANIOS = [anioActual, anioActual - 1, anioActual - 2]
+              .map(a => ({ label: String(a), value: a }));
 
 // ═══════════════════════════════════════════════════════
 // CALCULAR EDAD
 // ═══════════════════════════════════════════════════════
 function calcularEdadMeses(fechaNac) {
-  const diff = new Date() - fechaNac;
+  const diff = Date.now() - fechaNac.getTime();
   if (diff < 0) return null;
-  return Math.round(diff / (1000 * 60 * 60 * 24) / 30.4375);
+  return Math.round(diff / (1000 * 60 * 60 * 24 * 30.4375));
 }
 
 function actualizarBadge(badgeId) {
@@ -732,26 +493,26 @@ function actualizarBadge(badgeId) {
   if (!badge) return;
 
   const fechaNac = new Date(anio, mes - 1, dia);
-  const meses = calcularEdadMeses(fechaNac);
+  const meses    = calcularEdadMeses(fechaNac);
 
   badge.className = 'edad-badge show';
 
   if (meses === null || meses < 0) {
     badge.className = 'edad-badge show warn';
     badge.innerHTML = 'Fecha inválida.';
-  } else if (meses < 2) {
+  } else if (meses < EDAD_MIN) {
     badge.className = 'edad-badge show warn';
-    badge.innerHTML = `<b>${meses} ${meses===1?'mes':'meses'}</b> — La tabla aplica desde los 2 meses.`;
-  } else if (meses > 15) {
+    badge.innerHTML = `<b>${meses} ${meses === 1 ? 'mes' : 'meses'}</b> — La tabla aplica desde los ${EDAD_MIN} meses.`;
+  } else if (meses > EDAD_MAX) {
     badge.className = 'edad-badge show warn';
-    badge.innerHTML = `<b>${meses} meses</b> — Maxi Puppy aplica hasta los 15 meses. Consultá con tu veterinario.`;
+    badge.innerHTML = `<b>${meses} meses</b> — Giant Puppy aplica hasta los ${EDAD_MAX} meses. Debe pasar a Giant Junior.`;
   } else {
-    badge.innerHTML = `Edad calculada: <b>${meses} ${meses===1?'mes':'meses'}</b>`;
+    badge.innerHTML = `Edad calculada: <b>${meses} ${meses === 1 ? 'mes' : 'meses'}</b>`;
   }
 }
 
 // ═══════════════════════════════════════════════════════
-// CONFIGURACIÓN — guardar / cargar
+// CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
 function guardarConfig() {
   const nombre = document.getElementById('cfgNombre').value.trim();
@@ -760,18 +521,11 @@ function guardarConfig() {
   const dia  = drumGetVal('wrapDia');
   const mes  = drumGetVal('wrapMes');
   const anio = drumGetVal('wrapAnio');
-  const fechaNac = new Date(anio, mes - 1, dia);
-  const edadMeses = calcularEdadMeses(fechaNac);
+  const meses = calcularEdadMeses(new Date(anio, mes - 1, dia));
 
-  if (edadMeses === null || edadMeses < 0) { alert('La fecha de nacimiento no es válida.'); return; }
-  if (edadMeses < 2)  { alert('La edad mínima en la tabla es 2 meses.'); return; }
-  if (edadMeses > 15) { alert('Maxi Puppy aplica hasta los 15 meses. Consultá con tu veterinario.'); return; }
+  if (meses === null || meses < 0) { alert('La fecha de nacimiento no es válida.'); return; }
 
-  localStorage.setItem('cfg', JSON.stringify({
-    nombre,
-    dia, mes, anio
-  }));
-
+  localStorage.setItem('cfg', JSON.stringify({ nombre, dia, mes, anio }));
   irAMain();
 }
 
@@ -779,13 +533,12 @@ function irAConfig() {
   const cfg = cargarCfg();
   if (cfg) {
     document.getElementById('cfgNombre').value = cfg.nombre;
-    // Restaurar posición de ruedas
     const dIdx = DIAS.findIndex(d => d.value === cfg.dia);
     const mIdx = MESES.findIndex(m => m.value === cfg.mes);
     const aIdx = ANIOS.findIndex(a => a.value === cfg.anio);
-    if (dIdx >= 0) drumSetIdx('wrapDia', dIdx, false);
-    if (mIdx >= 0) drumSetIdx('wrapMes', mIdx, false);
-    if (aIdx >= 0) drumSetIdx('wrapAnio', aIdx, false);
+    if (dIdx >= 0) drumSetIdx('wrapDia',  dIdx);
+    if (mIdx >= 0) drumSetIdx('wrapMes',  mIdx);
+    if (aIdx >= 0) drumSetIdx('wrapAnio', aIdx);
     actualizarBadge('badgeSetup');
   }
   document.getElementById('screenMain').classList.remove('active');
@@ -801,14 +554,13 @@ function irAMain() {
   if (!cfg) { irAConfig(); return; }
 
   const fechaNac = new Date(cfg.anio, cfg.mes - 1, cfg.dia);
-  const meses = calcularEdadMeses(fechaNac);
+  const meses    = calcularEdadMeses(fechaNac);
 
   document.getElementById('headerNombre').textContent = cfg.nombre;
-
-  const rangoEdad = meses != null
-    ? `${meses} ${meses===1?'mes':'meses'} de edad`
-    : 'Edad no calculada';
-  document.getElementById('headerSub').textContent = `Gran Danés macho · ${rangoEdad}`;
+  document.getElementById('headerSub').textContent =
+    meses != null
+      ? `Gran Danés macho · ${meses} ${meses === 1 ? 'mes' : 'meses'} de edad`
+      : 'Gran Danés macho';
 
   document.getElementById('screenSetup').classList.remove('active');
   document.getElementById('screenMain').classList.add('active');
@@ -831,67 +583,70 @@ function calcular() {
   const fechaNac = new Date(cfg.anio, cfg.mes - 1, cfg.dia);
   const edadMes  = calcularEdadMeses(fechaNac);
 
-  if (edadMes === null || edadMes < 0) { alert('Fecha de nacimiento inválida. Revisá la configuración.'); return; }
-  if (edadMes < 2)  { alert(`Solo tiene ${edadMes} mes(es). La tabla aplica desde los 2 meses.`); return; }
-  if (edadMes > 15) { alert(`Ya tiene ${edadMes} meses. Maxi Puppy aplica hasta los 15 meses.`); return; }
+  if (edadMes === null || edadMes < 0) {
+    alert('Fecha de nacimiento inválida. Revisa la configuración.');
+    return;
+  }
 
-  const fila = buscarTabla(pesoVal, edadMes);
-
-  // ── Status de peso ──
   const sb = document.getElementById('statusBox');
   sb.className = 'status-box hidden';
-  if (!fila) {
+  sb.innerHTML = '';
+
+  // Validación rango de edad del alimento
+  if (edadMes < EDAD_MIN) {
     sb.className = 'status-box warn';
-    sb.innerHTML = `<div class="st-title">Combinación fuera de tabla</div>
-      <p>Un peso de <b>${pesoVal} kg</b> a los <b>${edadMes} meses</b> no tiene datos en la tabla de Maxi Puppy. Consultá con tu veterinario.</p>`;
+    sb.innerHTML = `<div class="st-title">Edad fuera del rango del alimento</div>
+      <p>Giant Puppy aplica desde los <b>${EDAD_MIN} meses</b>. ${cfg.nombre} tiene <b>${edadMes} ${edadMes === 1 ? 'mes' : 'meses'}</b>.</p>`;
     document.getElementById('results').classList.remove('hidden');
-    // Ocultar tarjeta resultado
     document.querySelector('.result-card').classList.add('hidden');
     document.querySelector('.table-note').classList.add('hidden');
     return;
   }
 
+  if (edadMes > EDAD_MAX) {
+    sb.className = 'status-box warn';
+    sb.innerHTML = `<div class="st-title">Tiempo de cambiar de alimento</div>
+      <p>${cfg.nombre} tiene <b>${edadMes} meses</b>. Giant Puppy es válido hasta los <b>${EDAD_MAX} meses</b>. Debe pasar a <b>Royal Canin Giant Junior</b>. Consulta con tu veterinario.</p>`;
+    document.getElementById('results').classList.remove('hidden');
+    document.querySelector('.result-card').classList.add('hidden');
+    document.querySelector('.table-note').classList.add('hidden');
+    return;
+  }
+
+  // Calcular gramos por edad
+  const resultado = calcularGramos(edadMes);
+  if (!resultado) return;
+
   document.querySelector('.result-card').classList.remove('hidden');
   document.querySelector('.table-note').classList.remove('hidden');
 
-  // Verificar si peso está en rango "esperado" de Gran Danés
-  // (usamos la tabla existente para validación orientativa)
-  const RANGO_PESO_GD = {
-    2:{min:15,max:20}, 3:{min:22,max:28}, 4:{min:30,max:36},
-    5:{min:35,max:43}, 6:{min:40,max:50}, 7:{min:45,max:55},
-    8:{min:50,max:60}, 9:{min:52,max:63}, 10:{min:54,max:66},
-    11:{min:56,max:68}, 12:{min:58,max:70}, 13:{min:59,max:71},
-    14:{min:60,max:72}, 15:{min:61,max:73}
-  };
-  const rp = RANGO_PESO_GD[edadMes];
+  // Alerta de peso (orientativa, no afecta la ración)
+  const rp = RANGO_PESO[edadMes];
   if (rp) {
     if (pesoVal < rp.min) {
       sb.className = 'status-box warn';
       sb.innerHTML = `<div class="st-title">Peso por debajo del rango esperado</div>
-        <p>A los ${edadMes} meses el rango orientativo de un Gran Danés macho es ${rp.min}–${rp.max} kg. Peso actual: <b>${pesoVal} kg</b>. Consultá con tu veterinario.</p>`;
+        <p>A los ${edadMes} meses el rango normal para un Gran Danés macho es <b>${rp.min}–${rp.max} kg</b>. Peso actual: <b>${pesoVal} kg</b>. Consulta con tu veterinario.</p>`;
     } else if (pesoVal > rp.max) {
       sb.className = 'status-box warn';
       sb.innerHTML = `<div class="st-title">Peso por encima del rango esperado</div>
-        <p>A los ${edadMes} meses el rango orientativo de un Gran Danés macho es ${rp.min}–${rp.max} kg. Peso actual: <b>${pesoVal} kg</b>. Consultá con tu veterinario.</p>`;
+        <p>A los ${edadMes} meses el rango normal para un Gran Danés macho es <b>${rp.min}–${rp.max} kg</b>. Peso actual: <b>${pesoVal} kg</b>. Consulta con tu veterinario.</p>`;
     } else {
       sb.className = 'status-box ok';
       sb.innerHTML = `<div class="st-title">Peso en rango normal</div>
-        <p>${pesoVal} kg a los ${edadMes} meses está dentro del rango esperado (${rp.min}–${rp.max} kg) para un Gran Danés macho.</p>`;
+        <p><b>${pesoVal} kg</b> a los ${edadMes} meses está dentro del rango esperado (${rp.min}–${rp.max} kg) para un Gran Danés macho.</p>`;
     }
   }
 
-  // ── Rango fabricante ──
-  document.getElementById('resMin').textContent = fila.gMin;
-  document.getElementById('resMax').textContent = fila.gMax;
-  document.getElementById('resBanda').textContent =
-    `Peso ${fila.pMin}–${fila.pMax} kg · Etapa ${etapaLabel(fila.eMin, fila.eMax)}`;
+  // ── Mostrar resultado ──
+  const { g, interpolado, desde, hasta } = resultado;
+  const nTomas     = edadMes < 6 ? 3 : 2;
+  const gPorToma   = Math.round(g / nTomas);
 
-  // ── Punto medio + tomas ──
-  const mid = Math.round((fila.gMin + fila.gMax) / 2);
-  const nTomas = edadMes < 6 ? 3 : 2;
-  const gPorToma = Math.round(mid / nTomas);
-
-  document.getElementById('resMid').textContent = mid;
+  document.getElementById('resGramos').textContent = g;
+  document.getElementById('resSub').textContent =
+    `${edadMes} ${edadMes === 1 ? 'mes' : 'meses'} de edad · peso adulto esperado 70 kg`;
+  document.getElementById('resMid').textContent   = g;
   document.getElementById('resNTomas').textContent = nTomas;
 
   const grid = document.getElementById('tomasGrid');
@@ -913,18 +668,16 @@ function calcular() {
     grid.appendChild(row);
   }
 
-  document.getElementById('resEtapa').textContent = etapaLabel(fila.eMin, fila.eMax);
+  // Nota tabla
+  const nota = interpolado
+    ? `<b>Interpolación lineal</b> entre ${desde.mes} meses (${desde.g} g) y ${hasta.mes} meses (${hasta.g} g). ` +
+      `Tabla base: Royal Canin Giant Puppy, peso adulto esperado 70 kg.`
+    : `<b>Valor directo de tabla.</b> Royal Canin Giant Puppy, peso adulto esperado 70 kg.`;
+  document.getElementById('tableNoteText').innerHTML = nota;
 
-  // ── Nota tabla ──
-  document.getElementById('tableNoteText').innerHTML =
-    `<b>Tabla de referencia:</b> Royal Canin Maxi Puppy. ` +
-    `Fila utilizada: ${fila.pMin}–${fila.pMax} kg de peso actual, etapa ${etapaLabel(fila.eMin, fila.eMax)}. ` +
-    `El punto medio (${mid} g) es el promedio entre ${fila.gMin} g y ${fila.gMax} g.`;
-
-  // Actualizar subtítulo del header con edad actualizada
-  const cfg2 = cargarCfg();
+  // Actualizar subtítulo
   document.getElementById('headerSub').textContent =
-    `Gran Danés macho · ${edadMes} ${edadMes===1?'mes':'meses'} de edad`;
+    `Gran Danés macho · ${edadMes} ${edadMes === 1 ? 'mes' : 'meses'} de edad`;
 
   document.getElementById('results').classList.remove('hidden');
   setTimeout(() => {
@@ -933,7 +686,7 @@ function calcular() {
 }
 
 // ═══════════════════════════════════════════════════════
-// BANNER INSTALAR
+// BANNER
 // ═══════════════════════════════════════════════════════
 function cerrarBanner() {
   document.getElementById('installBanner').classList.add('hidden');
@@ -944,27 +697,36 @@ function cerrarBanner() {
 // ARRANQUE
 // ═══════════════════════════════════════════════════════
 (function arrancar() {
-  // Inicializar ruedas (siempre, aunque no se muestren aún)
+  // 1. Inicializar ruedas
   initDrum('wrapDia',  'listDia',  DIAS,  () => actualizarBadge('badgeSetup'));
   initDrum('wrapMes',  'listMes',  MESES, () => actualizarBadge('badgeSetup'));
   initDrum('wrapAnio', 'listAnio', ANIOS, () => actualizarBadge('badgeSetup'));
 
-  // Routing inicial
+  // 2. Si hay config guardada, restaurar posición de ruedas aunque
+  //    la pantalla de setup no se muestre — así están listas si el
+  //    usuario entra a configuración desde el botón ⚙
   const cfg = cargarCfg();
   if (cfg) {
+    const dIdx = DIAS.findIndex(d => d.value === cfg.dia);
+    const mIdx = MESES.findIndex(m => m.value === cfg.mes);
+    const aIdx = ANIOS.findIndex(a => a.value === cfg.anio);
+    if (dIdx >= 0) drumSetIdx('wrapDia',  dIdx);
+    if (mIdx >= 0) drumSetIdx('wrapMes',  mIdx);
+    if (aIdx >= 0) drumSetIdx('wrapAnio', aIdx);
     irAMain();
   } else {
     document.getElementById('screenSetup').classList.add('active');
+    actualizarBadge('badgeSetup');
   }
 
-  // Banner PWA
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  // 3. Banner PWA
+  const isIOS        = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.navigator.standalone === true;
   if (isIOS && !isStandalone && !localStorage.getItem('bannerCerrado')) {
     document.getElementById('installBanner').classList.remove('hidden');
   }
 
-  // Service worker
+  // 4. Service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
