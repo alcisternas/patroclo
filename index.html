@@ -39,23 +39,20 @@
 
     /* ── Header ── */
     .app-header { padding: 56px 20px 16px; display: flex; align-items: flex-start; justify-content: space-between; }
-    .app-header .title-block .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
-    .app-header .title-block h1 { font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.1; }
-    .app-header .title-block p { margin-top: 4px; font-size: 13px; color: var(--muted); }
+    .title-block .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .title-block h1 { font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.1; }
+    .title-block .subtitle { margin-top: 4px; font-size: 13px; color: var(--muted); }
+    .title-block .version-tag { margin-top: 3px; font-size: 11px; color: var(--muted); opacity: .6; }
     .btn-settings { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 4px; -webkit-tap-highlight-color: transparent; box-shadow: var(--shadow); }
     .btn-settings svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.8; }
 
-    /* ── Card ── */
+    /* ── Cards ── */
     .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); margin: 0 16px 14px; padding: 20px; }
     .field + .field { margin-top: 18px; }
     .field-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: block; }
 
-    input[type="text"], input[type="number"] { width: 100%; height: 50px; border: 1.5px solid var(--border); border-radius: 10px; padding: 0 14px; font-size: 19px; font-weight: 500; color: var(--text); background: var(--bg); -webkit-appearance: none; appearance: none; outline: none; transition: border-color .15s; font-family: inherit; }
-    input[type="text"]:focus, input[type="number"]:focus { border-color: var(--accent); background: #fff; }
-    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    .input-with-unit { position: relative; }
-    .input-with-unit input { padding-right: 48px; }
-    .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 500; color: var(--muted); pointer-events: none; }
+    input[type="text"] { width: 100%; height: 50px; border: 1.5px solid var(--border); border-radius: 10px; padding: 0 14px; font-size: 19px; font-weight: 500; color: var(--text); background: var(--bg); -webkit-appearance: none; appearance: none; outline: none; transition: border-color .15s; font-family: inherit; }
+    input[type="text"]:focus { border-color: var(--accent); background: #fff; }
 
     /* ── Drum Picker ── */
     .drum-row { display: grid; grid-template-columns: 80px 1fr 88px; gap: 8px; touch-action: none; }
@@ -65,76 +62,102 @@
     .drum-wrap { position: relative; height: calc(var(--ih) * 5); overflow: hidden; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border); -webkit-user-select: none; user-select: none; cursor: grab; }
     .drum-wrap:active { cursor: grabbing; }
 
-    .drum-fade-top, .drum-fade-bot { position: absolute; left: 0; right: 0; height: calc(var(--ih) * 2); z-index: 3; pointer-events: none; }
-    .drum-fade-top { top: 0; background: linear-gradient(180deg, var(--bg) 20%, transparent 100%); }
-    .drum-fade-bot { bottom: 0; background: linear-gradient(0deg, var(--bg) 20%, transparent 100%); }
+    /* Franja central — z-index alto para que se vea sobre los ítems */
+    .drum-sel {
+      position: absolute; left: 0; right: 0;
+      top: calc(var(--ih) * 2); height: var(--ih);
+      background: var(--accent-lt);
+      border-top: 1.5px solid var(--accent);
+      border-bottom: 1.5px solid var(--accent);
+      border-radius: 8px;
+      z-index: 2; pointer-events: none;
+    }
 
-    .drum-sel { position: absolute; left: 6px; right: 6px; top: calc(var(--ih) * 2); height: var(--ih); background: var(--accent-lt); border-radius: 8px; border-top: 1.5px solid var(--accent); border-bottom: 1.5px solid var(--accent); z-index: 2; pointer-events: none; }
+    /* Fade top/bottom — z-index sobre la franja */
+    .drum-fade-top, .drum-fade-bot {
+      position: absolute; left: 0; right: 0;
+      height: calc(var(--ih) * 2.2);
+      z-index: 3; pointer-events: none;
+    }
+    .drum-fade-top { top: 0; background: linear-gradient(180deg, var(--bg) 30%, transparent 100%); }
+    .drum-fade-bot { bottom: 0; background: linear-gradient(0deg,   var(--bg) 30%, transparent 100%); }
 
     .drum-list { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
 
-    .drum-item { height: var(--ih); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: var(--text); opacity: 0.25; transform: scale(0.86); transform-origin: center center; will-change: opacity, transform; }
-    .drum-item.selected { opacity: 1; transform: scale(1); font-weight: 700; }
-    .drum-item.near { opacity: 0.5; transform: scale(0.93); }
-    .drum-item.placeholder { visibility: hidden; opacity: 0; }
+    /* Ítems — estilos base, el JS pinta inline los estados */
+    .drum-item {
+      height: var(--ih);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 500;
+      /* color y opacidad los controla JS con style inline */
+    }
+    .drum-item.is-placeholder { visibility: hidden; }
 
     /* Badge edad */
-    .edad-badge { margin-top: 10px; padding: 9px 13px; background: var(--accent-lt); border-radius: 8px; font-size: 13px; color: #1E4A2B; line-height: 1.4; display: none; }
+    .edad-badge { margin-top: 10px; padding: 9px 13px; border-radius: 8px; font-size: 13px; line-height: 1.4; display: none; }
     .edad-badge.show { display: block; }
-    .edad-badge.warn { background: var(--warn-lt); color: #7A2020; }
+    .edad-badge.ok   { background: var(--accent-lt); color: #1E4A2B; }
+    .edad-badge.warn { background: var(--warn-lt);   color: #7A2020; }
     .edad-badge b { font-weight: 700; }
 
     /* ── Botones ── */
-    .btn-primary { display: block; width: calc(100% - 32px); margin: 0 16px; height: 54px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 600; letter-spacing: -.1px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .12s; font-family: inherit; }
+    .btn-primary { display: block; width: calc(100% - 32px); margin: 0 16px; height: 54px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .12s; font-family: inherit; }
     .btn-primary:active { opacity: .82; }
+    .btn-secondary { display: block; width: calc(100% - 32px); margin: 10px 16px 0; height: 48px; background: var(--surface); color: var(--accent); border: 1.5px solid var(--accent); border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; font-family: inherit; transition: opacity .12s; }
+    .btn-secondary:active { opacity: .75; }
+    .btn-secondary:disabled { opacity: .45; cursor: default; }
 
-    /* ── Setup header ── */
-    #screenSetup .setup-header { padding: 60px 20px 24px; text-align: center; }
+    /* Setup header */
+    #screenSetup .setup-header { padding: 60px 20px 20px; text-align: center; }
     #screenSetup .setup-header h2 { font-size: 24px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 6px; }
-    #screenSetup .setup-header p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+    #screenSetup .setup-header p  { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+    /* Config extra (versión + actualización) */
+    .cfg-meta { margin: 14px 16px 0; padding: 14px 16px; background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .cfg-meta-row { display: flex; align-items: center; justify-content: space-between; }
+    .cfg-meta-row + .cfg-meta-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .cfg-meta-row .lbl { font-size: 12px; color: var(--muted); }
+    .cfg-meta-row .val { font-size: 12px; font-weight: 600; color: var(--text); }
+    #updateMsg { margin-top: 8px; font-size: 12px; color: var(--accent); text-align: center; min-height: 16px; }
 
     /* ── Resultados ── */
     #results { margin-top: 20px; }
 
     .status-box { margin: 0 16px 14px; border-radius: var(--radius); padding: 13px 16px; }
-    .status-box.ok { background: var(--accent-lt); border: 1px solid #C2D9C8; border-left: 4px solid var(--accent); }
-    .status-box.warn { background: var(--warn-lt); border: 1px solid var(--warn-bd); border-left: 4px solid var(--warn); }
+    .status-box.ok   { background: var(--accent-lt); border: 1px solid #C2D9C8; border-left: 4px solid var(--accent); }
+    .status-box.warn { background: var(--warn-lt);   border: 1px solid var(--warn-bd); border-left: 4px solid var(--warn); }
     .status-box .st-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
-    .status-box.ok .st-title { color: var(--accent); }
+    .status-box.ok   .st-title { color: var(--accent); }
     .status-box.warn .st-title { color: var(--warn); }
     .status-box p { font-size: 13px; line-height: 1.5; }
-    .status-box.ok p { color: #1E4A2B; }
+    .status-box.ok p   { color: #1E4A2B; }
     .status-box.warn p { color: #7A2020; }
 
     .result-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); margin: 0 16px 12px; overflow: hidden; }
 
-    /* Rango fabricante — header verde */
     .rc-fab { background: var(--accent); padding: 16px 18px; }
     .rc-fab .rc-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 8px; }
-    .rc-fab .rc-range { display: flex; align-items: baseline; gap: 6px; }
-    .rc-fab .rc-range .rval { font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -1px; line-height: 1; }
-    .rc-fab .rc-range .rsep { font-size: 22px; font-weight: 300; color: rgba(255,255,255,.5); }
-    .rc-fab .rc-range .runit { font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
+    .rc-fab .rc-val { font-size: 52px; font-weight: 800; color: #fff; letter-spacing: -2px; line-height: 1; }
+    .rc-fab .rc-unit { font-size: 16px; font-weight: 400; color: rgba(255,255,255,.75); margin-left: 4px; }
     .rc-fab .rc-sub { margin-top: 4px; font-size: 12px; color: rgba(255,255,255,.6); }
 
-    /* Tomas — punto medio */
     .rc-body { padding: 16px 18px; }
-    .rc-body .rc-mid-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .rc-mid-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
     .toma-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
     .toma-left strong { display: block; font-size: 15px; font-weight: 600; color: var(--text); }
-    .toma-left span { font-size: 12px; color: var(--muted); }
-    .toma-val { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; }
+    .toma-left span   { font-size: 12px; color: var(--muted); }
+    .toma-val { font-size: 26px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; }
     .toma-val small { font-size: 13px; font-weight: 500; color: var(--muted); }
     .row-div { height: 1px; background: var(--border); margin: 2px 0; }
 
     .rc-footer { border-top: 1px solid var(--border); padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
-    .rc-footer span { font-size: 12px; color: var(--muted); }
-    .rc-footer strong { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
+    .rc-footer span   { font-size: 12px; color: var(--muted); }
+    .rc-footer strong { font-size: 12px; font-weight: 600; color: var(--text); }
 
     .table-note { margin: 0 16px; padding: 10px 14px; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.5; }
     .table-note b { color: var(--text); }
 
-    /* ── Banner instalar ── */
+    /* Banner instalar */
     #installBanner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--accent); color: #fff; padding: 14px 20px 32px; font-size: 13px; line-height: 1.5; display: flex; align-items: flex-start; gap: 12px; z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.15); }
     #installBanner p { flex: 1; }
     #installBanner b { display: block; font-size: 14px; margin-bottom: 3px; }
@@ -145,12 +168,13 @@
 </head>
 <body>
 
-<!-- PANTALLA CONFIGURACIÓN -->
+<!-- ═══════════════ PANTALLA CONFIGURACIÓN ═══════════════ -->
 <div id="screenSetup" class="screen">
   <div class="setup-header">
-    <h2>Configuración inicial</h2>
-    <p>Estos datos se guardan en tu dispositivo y no tendrás que ingresarlos de nuevo.</p>
+    <h2>Configuración</h2>
+    <p>Estos datos se guardan en tu dispositivo.</p>
   </div>
+
   <div class="card">
     <div class="field">
       <span class="field-label">Nombre del perro</span>
@@ -162,27 +186,27 @@
         <div class="drum-col">
           <span class="drum-sublabel">Día</span>
           <div class="drum-wrap" id="wrapDia">
+            <div class="drum-sel"></div>
             <div class="drum-fade-top"></div>
             <div class="drum-fade-bot"></div>
-            <div class="drum-sel"></div>
             <div class="drum-list" id="listDia"></div>
           </div>
         </div>
         <div class="drum-col">
           <span class="drum-sublabel">Mes</span>
           <div class="drum-wrap" id="wrapMes">
+            <div class="drum-sel"></div>
             <div class="drum-fade-top"></div>
             <div class="drum-fade-bot"></div>
-            <div class="drum-sel"></div>
             <div class="drum-list" id="listMes"></div>
           </div>
         </div>
         <div class="drum-col">
           <span class="drum-sublabel">Año</span>
           <div class="drum-wrap" id="wrapAnio">
+            <div class="drum-sel"></div>
             <div class="drum-fade-top"></div>
             <div class="drum-fade-bot"></div>
-            <div class="drum-sel"></div>
             <div class="drum-list" id="listAnio"></div>
           </div>
         </div>
@@ -190,16 +214,33 @@
       <div class="edad-badge" id="badgeSetup"></div>
     </div>
   </div>
+
   <button class="btn-primary" onclick="guardarConfig()">Guardar y continuar</button>
+
+  <!-- Versión + actualización -->
+  <div class="cfg-meta">
+    <div class="cfg-meta-row">
+      <span class="lbl">Versión instalada</span>
+      <span class="val" id="versionLabel">—</span>
+    </div>
+    <div class="cfg-meta-row">
+      <span class="lbl">Actualizaciones</span>
+      <span class="val" id="swStatus">Verificando…</span>
+    </div>
+    <div id="updateMsg"></div>
+    <button class="btn-secondary" id="btnUpdate" onclick="forzarActualizacion()" disabled>
+      Buscar actualización
+    </button>
+  </div>
 </div>
 
-<!-- PANTALLA PRINCIPAL -->
+<!-- ═══════════════ PANTALLA PRINCIPAL ═══════════════ -->
 <div id="screenMain" class="screen">
   <div class="app-header">
     <div class="title-block">
       <p class="eyebrow">Royal Canin Giant Puppy</p>
       <h1 id="headerNombre">—</h1>
-      <p id="headerSub">—</p>
+      <p class="subtitle" id="headerSub">—</p>
     </div>
     <button class="btn-settings" onclick="irAConfig()" title="Configuración">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -209,31 +250,21 @@
     </button>
   </div>
 
-  <div class="card">
-    <div class="field">
-      <span class="field-label">Peso actual</span>
-      <div class="input-with-unit">
-        <input type="number" id="pesoInput" min="1" max="100" step="0.1" inputmode="decimal" placeholder="0.0" />
-        <span class="input-unit">kg</span>
-      </div>
-    </div>
-  </div>
-
   <button class="btn-primary" style="margin-bottom:14px" onclick="calcular()">Calcular ración</button>
 
   <div id="results" class="hidden">
     <div id="statusBox" class="status-box hidden"></div>
     <div class="result-card">
       <div class="rc-fab">
-        <div class="rc-eyebrow">Rango recomendado por fabricante</div>
-        <div class="rc-range">
-          <span class="rval" id="resGramos">—</span>
-          <span class="runit">g / día</span>
+        <div class="rc-eyebrow">Ración diaria recomendada</div>
+        <div>
+          <span class="rc-val" id="resGramos">—</span>
+          <span class="rc-unit">g / día</span>
         </div>
         <div class="rc-sub" id="resSub">—</div>
       </div>
       <div class="rc-body">
-        <div class="rc-mid-label">Punto medio · <span id="resMid">—</span> g/día · <span id="resNTomas">—</span> tomas</div>
+        <div class="rc-mid-label" id="tomasLabel">—</div>
         <div id="tomasGrid"></div>
       </div>
       <div class="rc-footer">
@@ -253,7 +284,7 @@
 
 <!-- Banner instalar PWA -->
 <div id="installBanner" class="hidden">
-  <p><b>Instalar como app</b>Toca el botón compartir <strong>⎙</strong> de Safari y elige <strong>"Agregar a pantalla de inicio"</strong>.</p>
+  <p><b>Instalar como app</b>Toca compartir <strong>⎙</strong> en Safari y elige <strong>"Agregar a pantalla de inicio"</strong>.</p>
   <button class="btn-close" onclick="cerrarBanner()">×</button>
 </div>
 
@@ -261,33 +292,33 @@
 'use strict';
 
 // ═══════════════════════════════════════════════════════
-// TABLA ROYAL CANIN GIANT PUPPY — peso adulto esperado 70 kg
-// Fuente: bolsa del producto (valores reales del usuario)
-// Interpolación lineal para meses intermedios (5, 6, 7)
+// VERSIÓN — debe coincidir con CACHE_NAME en sw.js
+// El hook pre-commit actualiza ambas líneas automáticamente
 // ═══════════════════════════════════════════════════════
-const TABLA_GIANT = [
+const APP_VERSION = 'patroclo-20260817-1632'; /* AUTO:VERSION — no editar esta línea a mano */
+
+// ═══════════════════════════════════════════════════════
+// TABLA ROYAL CANIN GIANT PUPPY — peso adulto esperado 70 kg
+// Valores reales del bolso del usuario
+// ═══════════════════════════════════════════════════════
+const TABLA = [
   { mes: 2, g: 422 },
   { mes: 3, g: 557 },
   { mes: 4, g: 621 },
   { mes: 8, g: 858 },
 ];
-
-// Aplica desde los 2 hasta los 8 meses
 const EDAD_MIN = 2;
 const EDAD_MAX = 8;
 
 function calcularGramos(edadMes) {
-  // Buscar el segmento correspondiente e interpolar
-  for (let i = 0; i < TABLA_GIANT.length - 1; i++) {
-    const a = TABLA_GIANT[i];
-    const b = TABLA_GIANT[i + 1];
+  for (let i = 0; i < TABLA.length - 1; i++) {
+    const a = TABLA[i], b = TABLA[i + 1];
     if (edadMes >= a.mes && edadMes <= b.mes) {
       const t = (edadMes - a.mes) / (b.mes - a.mes);
       return {
         g: Math.round(a.g + t * (b.g - a.g)),
         interpolado: edadMes !== a.mes && edadMes !== b.mes,
-        desde: a,
-        hasta: b,
+        desde: a, hasta: b,
       };
     }
   }
@@ -295,34 +326,42 @@ function calcularGramos(edadMes) {
 }
 
 // ═══════════════════════════════════════════════════════
-// RANGOS DE PESO NORMAL — Gran Danés macho por edad
+// DRUM PICKER — estilos inline directos, sin clases CSS
 // ═══════════════════════════════════════════════════════
-const RANGO_PESO = {
-  2: { min: 15, max: 20 },
-  3: { min: 22, max: 28 },
-  4: { min: 30, max: 36 },
-  5: { min: 35, max: 43 },
-  6: { min: 40, max: 50 },
-  7: { min: 45, max: 55 },
-  8: { min: 50, max: 60 },
-};
-
-// ═══════════════════════════════════════════════════════
-// DRUM PICKER
-// ═══════════════════════════════════════════════════════
-const IH  = 48; // altura ítem en px — debe coincidir con --ih
-const PAD = 2;  // ítems vacíos arriba y abajo
-
+const IH  = 48;
+const PAD = 2;
 const _drums = {};
 
-function initDrum(wrapId, listId, items, onChangeFn) {
-  const wrap = document.getElementById(wrapId);
-  const list = document.getElementById(listId);
+// Estilo directo sobre cada nodo — WebKit siempre respeta style inline
+function _pintarItems(s) {
+  const real = s.list.querySelectorAll('.drum-item:not(.is-placeholder)');
+  real.forEach((el, i) => {
+    if (i === s.idx) {
+      el.style.opacity    = '1';
+      el.style.color      = '#1A1A1A';
+      el.style.fontWeight = '700';
+      el.style.fontSize   = '17px';
+    } else if (i === s.idx - 1 || i === s.idx + 1) {
+      el.style.opacity    = '0.45';
+      el.style.color      = '#1A1A1A';
+      el.style.fontWeight = '500';
+      el.style.fontSize   = '15px';
+    } else {
+      el.style.opacity    = '0.18';
+      el.style.color      = '#1A1A1A';
+      el.style.fontWeight = '400';
+      el.style.fontSize   = '14px';
+    }
+  });
+}
 
+function initDrum(wrapId, listId, items, onChangeFn) {
+  const list = document.getElementById(listId);
   list.innerHTML = '';
+
   for (let i = 0; i < PAD; i++) {
     const el = document.createElement('div');
-    el.className = 'drum-item placeholder';
+    el.className = 'drum-item is-placeholder';
     el.textContent = '·';
     list.appendChild(el);
   }
@@ -334,13 +373,13 @@ function initDrum(wrapId, listId, items, onChangeFn) {
   });
   for (let i = 0; i < PAD; i++) {
     const el = document.createElement('div');
-    el.className = 'drum-item placeholder';
+    el.className = 'drum-item is-placeholder';
     el.textContent = '·';
     list.appendChild(el);
   }
 
-  _drums[wrapId] = {
-    wrap, list, items,
+  const s = {
+    list, items,
     idx: 0, offset: 0,
     dragging: false,
     startY: 0, startOffset: 0,
@@ -348,52 +387,42 @@ function initDrum(wrapId, listId, items, onChangeFn) {
     velocity: 0, rafId: null,
     onChange: onChangeFn || (() => {}),
   };
+  _drums[wrapId] = s;
 
-  // Aplicar estado inicial con clases correctas
-  _applyOffset(wrapId, 0, false);
+  // Posición inicial + pintar
+  list.style.transition = 'none';
+  list.style.transform  = 'translateY(0px)';
+  _pintarItems(s);
   _attachEvents(wrapId);
 }
 
 function _applyOffset(id, offset, animate) {
-  const s = _drums[id];
+  const s      = _drums[id];
   const maxOff = (s.items.length - 1) * IH;
   offset = Math.max(0, Math.min(offset, maxOff));
   s.offset = offset;
 
   s.list.style.transition = animate
-    ? 'transform .28s cubic-bezier(.25,.46,.45,.94)'
+    ? 'transform .26s cubic-bezier(.25,.46,.45,.94)'
     : 'none';
   s.list.style.transform = `translateY(${-offset}px)`;
 
   const newIdx = Math.round(offset / IH);
   s.idx = Math.max(0, Math.min(newIdx, s.items.length - 1));
-
-  // Actualizar clases visuales en ítems reales (sin placeholder)
-  const realItems = s.list.querySelectorAll('.drum-item:not(.placeholder)');
-  realItems.forEach((el, i) => {
-    // Forzar reflow para que la transición de opacity funcione en WebKit
-    el.style.transition = animate ? 'opacity .18s ease, transform .18s ease' : 'none';
-    el.classList.remove('selected', 'near');
-    if (i === s.idx) {
-      el.classList.add('selected');
-    } else if (i === s.idx - 1 || i === s.idx + 1) {
-      el.classList.add('near');
-    }
-  });
+  _pintarItems(s);
 }
 
 function _snap(id) {
-  const s = _drums[id];
+  const s      = _drums[id];
   const target = Math.round(s.offset / IH) * IH;
   _applyOffset(id, target, true);
   s.onChange();
 }
 
 function _attachEvents(id) {
-  const s   = _drums[id];
-  const wrap = s.wrap;
+  const s    = _drums[id];
+  const wrap = document.getElementById(id);
 
-  // ── Touch ──
   wrap.addEventListener('touchstart', e => {
     cancelAnimationFrame(s.rafId);
     s.dragging    = true;
@@ -410,8 +439,7 @@ function _attachEvents(id) {
     if (!s.dragging) return;
     const y   = e.touches[0].clientY;
     const now = Date.now();
-    const dt  = Math.max(now - s.lastTime, 1);
-    s.velocity = (s.lastY - y) / dt;
+    s.velocity = (s.lastY - y) / Math.max(now - s.lastTime, 1);
     s.lastY    = y;
     s.lastTime = now;
     _applyOffset(id, s.startOffset + (s.startY - y), false);
@@ -421,24 +449,19 @@ function _attachEvents(id) {
   wrap.addEventListener('touchend', () => {
     if (!s.dragging) return;
     s.dragging = false;
-    let vel    = s.velocity;
-    let offset = s.offset;
-
+    let vel = s.velocity, offset = s.offset;
     const step = () => {
       vel    *= 0.85;
       offset += vel * 16;
       _applyOffset(id, offset, false);
-      if (Math.abs(vel) > 0.08) {
-        s.rafId = requestAnimationFrame(step);
-      } else {
-        _snap(id);
-      }
+      Math.abs(vel) > 0.08
+        ? (s.rafId = requestAnimationFrame(step))
+        : _snap(id);
     };
-
     Math.abs(vel) > 0.12 ? requestAnimationFrame(step) : _snap(id);
   });
 
-  // ── Mouse (desktop / pruebas) ──
+  // Mouse para pruebas en desktop
   let mDown = false, mStartY = 0, mStartOff = 0;
   wrap.addEventListener('mousedown', e => {
     mDown = true; mStartY = e.clientY; mStartOff = s.offset;
@@ -472,12 +495,11 @@ const DIAS  = Array.from({ length: 31 }, (_, i) => ({ label: String(i + 1).padSt
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
               .map((m, i) => ({ label: m, value: i + 1 }));
-const anioActual = new Date().getFullYear();
-const ANIOS = [anioActual, anioActual - 1, anioActual - 2]
-              .map(a => ({ label: String(a), value: a }));
+const anioHoy = new Date().getFullYear();
+const ANIOS   = [anioHoy, anioHoy - 1, anioHoy - 2].map(a => ({ label: String(a), value: a }));
 
 // ═══════════════════════════════════════════════════════
-// CALCULAR EDAD
+// EDAD
 // ═══════════════════════════════════════════════════════
 function calcularEdadMeses(fechaNac) {
   const diff = Date.now() - fechaNac.getTime();
@@ -492,9 +514,7 @@ function actualizarBadge(badgeId) {
   const badge = document.getElementById(badgeId);
   if (!badge) return;
 
-  const fechaNac = new Date(anio, mes - 1, dia);
-  const meses    = calcularEdadMeses(fechaNac);
-
+  const meses = calcularEdadMeses(new Date(anio, mes - 1, dia));
   badge.className = 'edad-badge show';
 
   if (meses === null || meses < 0) {
@@ -507,6 +527,7 @@ function actualizarBadge(badgeId) {
     badge.className = 'edad-badge show warn';
     badge.innerHTML = `<b>${meses} meses</b> — Giant Puppy aplica hasta los ${EDAD_MAX} meses. Debe pasar a Giant Junior.`;
   } else {
+    badge.className = 'edad-badge show ok';
     badge.innerHTML = `Edad calculada: <b>${meses} ${meses === 1 ? 'mes' : 'meses'}</b>`;
   }
 }
@@ -529,6 +550,10 @@ function guardarConfig() {
   irAMain();
 }
 
+function cargarCfg() {
+  try { return JSON.parse(localStorage.getItem('cfg')); } catch { return null; }
+}
+
 function irAConfig() {
   const cfg = cargarCfg();
   if (cfg) {
@@ -545,17 +570,11 @@ function irAConfig() {
   document.getElementById('screenSetup').classList.add('active');
 }
 
-function cargarCfg() {
-  try { return JSON.parse(localStorage.getItem('cfg')); } catch { return null; }
-}
-
 function irAMain() {
   const cfg = cargarCfg();
   if (!cfg) { irAConfig(); return; }
 
-  const fechaNac = new Date(cfg.anio, cfg.mes - 1, cfg.dia);
-  const meses    = calcularEdadMeses(fechaNac);
-
+  const meses = calcularEdadMeses(new Date(cfg.anio, cfg.mes - 1, cfg.dia));
   document.getElementById('headerNombre').textContent = cfg.nombre;
   document.getElementById('headerSub').textContent =
     meses != null
@@ -574,89 +593,56 @@ function calcular() {
   const cfg = cargarCfg();
   if (!cfg) { irAConfig(); return; }
 
-  const pesoVal = parseFloat(document.getElementById('pesoInput').value);
-  if (isNaN(pesoVal) || pesoVal <= 0) {
-    alert('Por favor ingresa el peso actual.');
-    return;
-  }
-
   const fechaNac = new Date(cfg.anio, cfg.mes - 1, cfg.dia);
   const edadMes  = calcularEdadMeses(fechaNac);
-
-  if (edadMes === null || edadMes < 0) {
-    alert('Fecha de nacimiento inválida. Revisa la configuración.');
-    return;
-  }
 
   const sb = document.getElementById('statusBox');
   sb.className = 'status-box hidden';
   sb.innerHTML = '';
 
-  // Validación rango de edad del alimento
+  const mostrarSolo = (tipo, titulo, texto) => {
+    sb.className = `status-box ${tipo}`;
+    sb.innerHTML = `<div class="st-title">${titulo}</div><p>${texto}</p>`;
+    document.getElementById('results').classList.remove('hidden');
+    document.querySelector('.result-card').classList.add('hidden');
+    document.querySelector('.table-note').classList.add('hidden');
+  };
+
+  if (edadMes === null || edadMes < 0) {
+    mostrarSolo('warn', 'Fecha inválida', 'Revisa la configuración.');
+    return;
+  }
   if (edadMes < EDAD_MIN) {
-    sb.className = 'status-box warn';
-    sb.innerHTML = `<div class="st-title">Edad fuera del rango del alimento</div>
-      <p>Giant Puppy aplica desde los <b>${EDAD_MIN} meses</b>. ${cfg.nombre} tiene <b>${edadMes} ${edadMes === 1 ? 'mes' : 'meses'}</b>.</p>`;
-    document.getElementById('results').classList.remove('hidden');
-    document.querySelector('.result-card').classList.add('hidden');
-    document.querySelector('.table-note').classList.add('hidden');
+    mostrarSolo('warn', 'Muy joven para la tabla',
+      `Giant Puppy aplica desde los <b>${EDAD_MIN} meses</b>. ${cfg.nombre} tiene <b>${edadMes} ${edadMes === 1 ? 'mes' : 'meses'}</b>.`);
     return;
   }
-
   if (edadMes > EDAD_MAX) {
-    sb.className = 'status-box warn';
-    sb.innerHTML = `<div class="st-title">Tiempo de cambiar de alimento</div>
-      <p>${cfg.nombre} tiene <b>${edadMes} meses</b>. Giant Puppy es válido hasta los <b>${EDAD_MAX} meses</b>. Debe pasar a <b>Royal Canin Giant Junior</b>. Consulta con tu veterinario.</p>`;
-    document.getElementById('results').classList.remove('hidden');
-    document.querySelector('.result-card').classList.add('hidden');
-    document.querySelector('.table-note').classList.add('hidden');
+    mostrarSolo('warn', 'Tiempo de cambiar de alimento',
+      `${cfg.nombre} tiene <b>${edadMes} meses</b>. Giant Puppy es válido hasta los <b>${EDAD_MAX} meses</b>. Debe pasar a <b>Royal Canin Giant Junior</b>. Consulta con tu veterinario.`);
     return;
   }
 
-  // Calcular gramos por edad
   const resultado = calcularGramos(edadMes);
   if (!resultado) return;
 
   document.querySelector('.result-card').classList.remove('hidden');
   document.querySelector('.table-note').classList.remove('hidden');
 
-  // Alerta de peso (orientativa, no afecta la ración)
-  const rp = RANGO_PESO[edadMes];
-  if (rp) {
-    if (pesoVal < rp.min) {
-      sb.className = 'status-box warn';
-      sb.innerHTML = `<div class="st-title">Peso por debajo del rango esperado</div>
-        <p>A los ${edadMes} meses el rango normal para un Gran Danés macho es <b>${rp.min}–${rp.max} kg</b>. Peso actual: <b>${pesoVal} kg</b>. Consulta con tu veterinario.</p>`;
-    } else if (pesoVal > rp.max) {
-      sb.className = 'status-box warn';
-      sb.innerHTML = `<div class="st-title">Peso por encima del rango esperado</div>
-        <p>A los ${edadMes} meses el rango normal para un Gran Danés macho es <b>${rp.min}–${rp.max} kg</b>. Peso actual: <b>${pesoVal} kg</b>. Consulta con tu veterinario.</p>`;
-    } else {
-      sb.className = 'status-box ok';
-      sb.innerHTML = `<div class="st-title">Peso en rango normal</div>
-        <p><b>${pesoVal} kg</b> a los ${edadMes} meses está dentro del rango esperado (${rp.min}–${rp.max} kg) para un Gran Danés macho.</p>`;
-    }
-  }
-
-  // ── Mostrar resultado ──
   const { g, interpolado, desde, hasta } = resultado;
-  const nTomas     = edadMes < 6 ? 3 : 2;
-  const gPorToma   = Math.round(g / nTomas);
+  const nTomas   = edadMes < 6 ? 3 : 2;
+  const gPorToma = Math.round(g / nTomas);
 
   document.getElementById('resGramos').textContent = g;
   document.getElementById('resSub').textContent =
-    `${edadMes} ${edadMes === 1 ? 'mes' : 'meses'} de edad · peso adulto esperado 70 kg`;
-  document.getElementById('resMid').textContent   = g;
-  document.getElementById('resNTomas').textContent = nTomas;
+    `${edadMes} ${edadMes === 1 ? 'mes' : 'meses'} · peso adulto esperado 70 kg`;
+  document.getElementById('tomasLabel').textContent =
+    `${nTomas} tomas · ${gPorToma} g cada una`;
 
   const grid = document.getElementById('tomasGrid');
   grid.innerHTML = '';
   for (let i = 1; i <= nTomas; i++) {
-    if (i > 1) {
-      const d = document.createElement('div');
-      d.className = 'row-div';
-      grid.appendChild(d);
-    }
+    if (i > 1) { const d = document.createElement('div'); d.className = 'row-div'; grid.appendChild(d); }
     const row = document.createElement('div');
     row.className = 'toma-row';
     row.innerHTML = `
@@ -668,14 +654,10 @@ function calcular() {
     grid.appendChild(row);
   }
 
-  // Nota tabla
-  const nota = interpolado
-    ? `<b>Interpolación lineal</b> entre ${desde.mes} meses (${desde.g} g) y ${hasta.mes} meses (${hasta.g} g). ` +
-      `Tabla base: Royal Canin Giant Puppy, peso adulto esperado 70 kg.`
+  document.getElementById('tableNoteText').innerHTML = interpolado
+    ? `<b>Interpolación lineal</b> entre ${desde.mes} meses (${desde.g} g) y ${hasta.mes} meses (${hasta.g} g). Tabla: Royal Canin Giant Puppy, peso adulto 70 kg.`
     : `<b>Valor directo de tabla.</b> Royal Canin Giant Puppy, peso adulto esperado 70 kg.`;
-  document.getElementById('tableNoteText').innerHTML = nota;
 
-  // Actualizar subtítulo
   document.getElementById('headerSub').textContent =
     `Gran Danés macho · ${edadMes} ${edadMes === 1 ? 'mes' : 'meses'} de edad`;
 
@@ -686,7 +668,94 @@ function calcular() {
 }
 
 // ═══════════════════════════════════════════════════════
-// BANNER
+// SERVICE WORKER — registro y actualización forzada
+// ═══════════════════════════════════════════════════════
+let _swRegistration = null;
+
+function iniciarSW() {
+  if (!('serviceWorker' in navigator)) {
+    document.getElementById('swStatus').textContent = 'No disponible';
+    return;
+  }
+
+  document.getElementById('versionLabel').textContent = APP_VERSION;
+
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    _swRegistration = reg;
+
+    // Escuchar cuando hay un nuevo SW esperando
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // Hay una versión nueva lista — habilitar botón
+          document.getElementById('swStatus').textContent  = 'Actualización disponible';
+          document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista. Toca el botón para aplicarla.';
+          document.getElementById('btnUpdate').disabled    = false;
+        }
+      });
+    });
+
+    // Estado inicial
+    if (reg.waiting) {
+      document.getElementById('swStatus').textContent  = 'Actualización disponible';
+      document.getElementById('updateMsg').textContent = 'Hay una nueva versión lista. Toca el botón para aplicarla.';
+      document.getElementById('btnUpdate').disabled    = false;
+    } else if (reg.active) {
+      document.getElementById('swStatus').textContent = 'Al día';
+      document.getElementById('btnUpdate').disabled   = false; // permitir buscar manualmente
+    }
+
+    // Forzar verificación inmediata
+    reg.update();
+
+  }).catch(() => {
+    document.getElementById('swStatus').textContent = 'Error al registrar';
+  });
+
+  // Cuando el SW nuevo toma control, recargar la página
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+function forzarActualizacion() {
+  const btn = document.getElementById('btnUpdate');
+  const msg = document.getElementById('updateMsg');
+
+  if (!_swRegistration) {
+    msg.textContent = 'Service worker no disponible.';
+    return;
+  }
+
+  // Si ya hay una versión esperando, activarla ahora
+  if (_swRegistration.waiting) {
+    msg.textContent = 'Aplicando actualización…';
+    btn.disabled    = true;
+    _swRegistration.waiting.postMessage('SKIP_WAITING');
+    return;
+  }
+
+  // Si no, buscar en el servidor
+  msg.textContent = 'Buscando actualizaciones…';
+  btn.disabled    = true;
+
+  _swRegistration.update().then(() => {
+    if (_swRegistration.waiting) {
+      msg.textContent = 'Actualización encontrada. Aplicando…';
+      _swRegistration.waiting.postMessage('SKIP_WAITING');
+    } else {
+      msg.textContent = 'Ya tienes la versión más reciente.';
+      btn.disabled    = false;
+    }
+  }).catch(() => {
+    msg.textContent = 'No se pudo verificar. Revisa tu conexión.';
+    btn.disabled    = false;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BANNER INSTALAR
 // ═══════════════════════════════════════════════════════
 function cerrarBanner() {
   document.getElementById('installBanner').classList.add('hidden');
@@ -697,14 +766,10 @@ function cerrarBanner() {
 // ARRANQUE
 // ═══════════════════════════════════════════════════════
 (function arrancar() {
-  // 1. Inicializar ruedas
   initDrum('wrapDia',  'listDia',  DIAS,  () => actualizarBadge('badgeSetup'));
   initDrum('wrapMes',  'listMes',  MESES, () => actualizarBadge('badgeSetup'));
   initDrum('wrapAnio', 'listAnio', ANIOS, () => actualizarBadge('badgeSetup'));
 
-  // 2. Si hay config guardada, restaurar posición de ruedas aunque
-  //    la pantalla de setup no se muestre — así están listas si el
-  //    usuario entra a configuración desde el botón ⚙
   const cfg = cargarCfg();
   if (cfg) {
     const dIdx = DIAS.findIndex(d => d.value === cfg.dia);
@@ -719,17 +784,13 @@ function cerrarBanner() {
     actualizarBadge('badgeSetup');
   }
 
-  // 3. Banner PWA
   const isIOS        = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.navigator.standalone === true;
   if (isIOS && !isStandalone && !localStorage.getItem('bannerCerrado')) {
     document.getElementById('installBanner').classList.remove('hidden');
   }
 
-  // 4. Service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
+  iniciarSW();
 })();
 </script>
 </body>
