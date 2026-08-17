@@ -1,4 +1,4 @@
-const CACHE_NAME = 'patroclo-20260817-1650'; /* AUTO:VERSION — no editar esta línea a mano */
+const CACHE_NAME = 'patroclo-20260817-1703'; /* AUTO:VERSION — no editar esta línea a mano */
 const ASSETS = [
   './',
   './index.html',
